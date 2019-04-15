@@ -8,7 +8,7 @@
 #' version is copied with a '_ll' suffix.
 #'
 #' Longer names and decomposition of each region is in 'measo_names'.
-#' @name measo_regions02
-#' @aliases measo_regions02_ll measo_names
+#' @name measo_regions03
+#' @aliases measo_regions03_ll measo_names
 #' @docType data
 NULL
