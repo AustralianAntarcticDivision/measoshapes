@@ -46,7 +46,7 @@ Two other forms in polar and longitude/latitude form are use for model overlays 
 * `measo_regions05_ll` the polygons in longitude/latitude form
 
 
-To make a map with these we can 
+To make a map with these we can use the following code
 
 ```{r measo-map}
 library(measoshapes)
@@ -59,7 +59,8 @@ maps::map(add = TRUE, col = "grey", fill = FALSE)
 
 To export to shapefile: 
 
-```{r exportshp, eval = FALSE}
+
+```{r exportshp1, eval = FALSE}
 st_write(measo_regions05_ll_coastline, "myfile.shp", driver = "SHP")
 ```
 
@@ -67,6 +68,6 @@ st_write(measo_regions05_ll_coastline, "myfile.shp", driver = "SHP")
 ---
 
 Please note that the 'measoshapes' project is released with a
-  [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+[Contributor Code of Conduct](CODE_OF_CONDUCT.md).
   By contributing to this project, you agree to abide by its terms.
 

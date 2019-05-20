@@ -40,7 +40,7 @@ overlays (for technical reasons).
     zone
   - `measo_regions05_ll` the polygons in longitude/latitude form
 
-To make a map with these we can
+To make a map with these we can use the following code
 
 ``` r
 library(measoshapes)
