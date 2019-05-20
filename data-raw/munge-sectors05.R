@@ -111,5 +111,16 @@ usethis::use_data(measo_names, overwrite = TRUE)
 usethis::use_data(measo_regions05_ll)
 usethis::use_data(measo_regions05)
 
+l <- raadtools:::keepOnlyMostComplexLine(sp::SpatialLinesDataFrame(as(sf::as_Spatial(SOmap::SOmap_data$ant_coast_land), "SpatialLines"), data.frame(a=1), match.ID = F))
+mm <- coordinates(l)[[1]][[1]]
 
+mm <- reproj(mm, source = "+proj=stere +lat_0=-90 +lat_ts=-71 +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0", target = 4326)[, 1:2]
+aa <- st_union(st_cast(sfdct::ct_triangulate(st_sfc(st_polygon(list(mm))))))
+aa <- st_set_crs(aa, st_crs(measo_regions05_ll))
+measo_regions05_ll_coastline <- st_cast(st_difference(measo_regions05_ll, aa))
+usethis::use_data(measo_regions05_ll_coastline)
+measo_regions05_coastline <- sf::st_transform(sf::st_set_crs(sf::st_segmentize(sf::st_set_crs(measo_regions05_ll_coastline, NA), 0.2), 4326),
+                                    "+proj=laea +lat_0=-90 +lon_0=0 +datum=WGS84")
+
+usethis::use_data(measo_regions05_coastline)
 

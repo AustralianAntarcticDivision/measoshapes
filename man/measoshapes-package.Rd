@@ -9,8 +9,21 @@
 Provides Southern Ocean Shapes for 'MEASO' work, a Marine Ecosystem
  Assessment for the Southern Ocean.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/AustralianAntarcticDivision/measoshapes}
+  \item Report bugs at \url{https://github.com/AustralianAntarcticDivision/measoshapes/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Michael D. Sumner \email{michael.sumner@aad.gov.au}
+
+Other contributors:
+\itemize{
+  \item Andrew Constable [contributor]
+}
 
 }
 \keyword{internal}

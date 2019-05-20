@@ -2,13 +2,20 @@ Package: measoshapes
 Title: Southern Ocean Shapes for 'MEASO' work. 
 Version: 0.0.05
 Authors@R: 
-    person(given = "Michael D.",
+    c(person(given = "Michael D.",
            family = "Sumner",
            role = c("aut", "cre"),
-           email = "michael.sumner@aad.gov.au")
+           email = "michael.sumner@aad.gov.au"), 
+      person(given = "Andrew", 
+             family = "Constable", 
+             role = "ctb"))
 Description: Provides Southern Ocean Shapes for 'MEASO' work, a Marine Ecosystem
  Assessment for the Southern Ocean.
 License: GPL-3
+Depends: sf
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
+URL: https://github.com/AustralianAntarcticDivision/measoshapes
+BugReports: https://github.com/AustralianAntarcticDivision/measoshapes/issues
+Roxygen: list(markdown = TRUE)
