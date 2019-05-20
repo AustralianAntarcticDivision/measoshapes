@@ -58,6 +58,39 @@ To export to shapefile:
 st_write(measo_regions05_ll_coastline, "myfile.shp", driver = "SHP")
 ```
 
+Here we explore the names in more detail. The northern regions are
+assigned codes that include “T” for **tropical**, but they aren’t
+supposed to be part of MEASO. They share a sector but have no assigned
+zone. From `colour_values` on zone they get black.
+
+``` r
+par(mar = rep(0, 4))
+plot(st_geometry(measo_regions05_ll), reset = FALSE, 
+     col = colourvalues::colour_values(measo_names$sector, alpha = 0.5))
+cds <- st_coordinates(st_centroid(measo_regions05_ll))
+#> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon =
+#> of_largest_polygon): st_centroid does not give correct centroids for
+#> longitude/latitude data
+text(cds, lab = measo_names$name)
+title("name")
+```
+
+<img src="man/figures/README-dummy-1.png" width="100%" />
+
+``` r
+
+plot(st_geometry(measo_regions05_ll), reset = FALSE, 
+     col = colourvalues::colour_values(measo_names$zone, alpha = 0.5))
+cds <- st_coordinates(st_centroid(measo_regions05_ll))
+#> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon =
+#> of_largest_polygon): st_centroid does not give correct centroids for
+#> longitude/latitude data
+text(cds, lab = measo_names$name)
+title("zone")
+```
+
+<img src="man/figures/README-dummy-2.png" width="100%" />
+
 -----
 
 Please note that the ‘measoshapes’ project is released with a

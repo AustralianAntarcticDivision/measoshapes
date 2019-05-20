@@ -1,5 +1,7 @@
 minlat <- -80
 maxlat <- -30
+library(sp)
+library(reproj)
 sectors_ll <- tibble::tribble(~lon, ~lat, ~zone,
                  -125, minlat,  1,
                  -125, maxlat,  1,
@@ -65,17 +67,17 @@ ord <- spbabel::sptable(measo_regions05) %>%
 measo_regions05 <- measo_regions05[ord, ]
 plot(measo_regions05, col = viridis::viridis(25))
 measo_regions05$name <- c("WPA", "WPS", "WPN",
-                          NA, ## northern background,
+                          "WPT", ## northern background,
                           "EPA", "EPS", "EPN",
-                          NA,
-                          "AOA", NA, "AOS",
+                          "EPT",
+                          "AOA", "AOT", "AOS",
                           "AON",
                           "CIA", "CIS", "CIN",
-                          NA,
+                          "CIT",
                           "EIA", "EIS", "EIN",
-                          NA,
+                          "EIT",
                           "WPA", "WPS", "WPN",
-                          NA)
+                          "WPT")
 measo_regions05$a <- NULL
 measo_regions05_ll <- measo_regions05
 plot(st_geometry(measo_regions05), reset = FALSE,
