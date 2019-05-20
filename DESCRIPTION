@@ -1,6 +1,6 @@
 Package: measoshapes
 Title: Southern Ocean Shapes for 'MEASO' work. 
-Version: 0.0.04
+Version: 0.0.05
 Authors@R: 
     person(given = "Michael D.",
            family = "Sumner",
