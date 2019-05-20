@@ -1,24 +1,27 @@
 minlat <- -80
+maxlat <- -30
 sectors_ll <- tibble::tribble(~lon, ~lat, ~zone,
                  -125, minlat,  1,
-                 -125, -35,  1,
+                 -125, maxlat,  1,
 
                  -70, minlat, 2,
                  -64.5, -66, 2,
                  -60, -64, 2,
                  -55.054477039271191, -63.260598133971456, 2,
                  -63.799776827053591, -54.721070105901589, 2,
+                 -63.799776827053591, maxlat,2,
 
                30, minlat, 3,
-               30, -35, 3,
+               30, maxlat, 3,
 
                  115, minlat, 4,
-                 115, -35, 4,
+                 115, maxlat, 4,
 
                  158, minlat, 5,
                  158, -75,    5,
                  170, -71.60, 5,
-                 170, -47.50, 5
+                 170, -47.50, 5,
+                 170, maxlat, 5,
                  )
 
 library(spbabel)
@@ -30,7 +33,9 @@ sectors <- sectors_ll %>%
 sectors <- sf::st_as_sf(sectors)
 #file.copy("../measo-access/shapes/zones.Rdata", "data-raw/zones.Rdata")
 load("data-raw/zones.Rdata")
-
+zones <- rbind(zones,
+    st_sf(ID = 0, front = NA_character_,
+          geometry = st_sfc(st_linestring(cbind(c(-180, 180), maxlat)))))
 #plot(sectors)
 #plot(zones, add = TRUE)
 #maps::map(add = TRUE)
@@ -42,60 +47,69 @@ lns <- st_sf(geometry = c(st_geometry(sectors),
                           st_geometry(domain),
                           st_geometry(zones)), crs = 4326)
 
-measo_regions03g <- st_cast(st_polygonize(st_union(lns)))
+gg <- st_cast(st_polygonize(st_union(lns)))
 ## drop degenerate regions
-measo_regions03g <- measo_regions03g[st_area(st_set_crs(measo_regions03g, NA)) > 1]
+gg <- gg[st_area(st_set_crs(gg, NA)) > 1]
 
 
-measo_regions04 <- st_sf(geometry = measo_regions03g)
-#st_coordinates(st_centroid(measo_regions03))[,2]
-plot(measo_regions04[st_coordinates(st_centroid(measo_regions04))[,2] < -38, ],
-     col = sample(rainbow(nrow(measo_regions04)-1)))
-
+measo_regions05 <- st_sf(geometry = gg)
+plot(measo_regions05, col = sample(viridis::viridis(30)))
 
 
 
 ## order by longitude, then latitude of bottom left corner
-ord <- spbabel::sptable(measo_regions04) %>%
+ord <- spbabel::sptable(measo_regions05) %>%
   group_by(object_) %>%
   arrange(x_, y_) %>% slice(1) %>% ungroup() %>% arrange(x_, y_) %>% pull(object_)
 
-measo_regions04 <- measo_regions04[ord, ]
-
-measo_regions04$name <- c("WPA", "WPS", "WPN",
+measo_regions05 <- measo_regions05[ord, ]
+plot(measo_regions05, col = viridis::viridis(25))
+measo_regions05$name <- c("WPA", "WPS", "WPN",
                           NA, ## northern background,
                           "EPA", "EPS", "EPN",
-                          "AOA", "AOS", "AON",
-
+                          NA,
+                          "AOA", NA, "AOS",
+                          "AON",
                           "CIA", "CIS", "CIN",
+                          NA,
                           "EIA", "EIS", "EIN",
-                          "WPA", "WPS", "WPN")
-measo_regions04$a <- NULL
-measo_regions04_ll <- measo_regions04
-plot(st_geometry(measo_regions04), reset = FALSE,
-     col = rainbow(length(unique(measo_regions04$name)),
-                   alpha = 0.4)[factor(measo_regions04$name)], border  = NA)
-text(st_coordinates(st_centroid(measo_regions04)),
-     lab = measo_regions04$name)
+                          NA,
+                          "WPA", "WPS", "WPN",
+                          NA)
+measo_regions05$a <- NULL
+measo_regions05_ll <- measo_regions05
+plot(st_geometry(measo_regions05), reset = FALSE,
+     col = rainbow(length(unique(measo_regions05$name)),
+                   alpha = 0.4)[factor(measo_regions05$name)], border  = NA)
+text(st_coordinates(st_centroid(measo_regions05)),
+lab = measo_regions05$name)
+#   lab = 1:24)
+
+
+
+
 sp::plot(orsifronts::orsifronts, add = TRUE)
 
 
 ## zones polar
-measo_regions04 <- sf::st_transform(sf::st_set_crs(sf::st_segmentize(sf::st_set_crs(measo_regions04_ll, NA), 0.2), 4326),
+measo_regions05 <- sf::st_transform(sf::st_set_crs(sf::st_segmentize(sf::st_set_crs(measo_regions05_ll, NA), 0.2), 4326),
                           "+proj=laea +lat_0=-90 +lon_0=0 +datum=WGS84")
 
 
-zz <- c("Antarctic", "Subantarctic", "Northern")
+zz <- c("Antarctic", "Subantarctic", "Northern", NA,
+        "Antarctic", "Subantarctic", "Northern", NA,
+        "Antarctic", NA, "Subantarctic", "Northern",
+        "Antarctic", "Subantarctic", "Northern", NA,
+        "Antarctic", "Subantarctic", "Northern", NA,
+        "Antarctic", "Subantarctic", "Northern", NA)
 sec <- c("WestPacific", "EastPacific", "Atlantic",
          "CentralIndian", "EastIndian", "WestPacific")
-measo_names <- tibble::tibble(name = measo_regions04$name,
-                              sector = c(rep(sec[1], 3), NA,
-                                         rep(sec[-1], each =  3)),
-                              zone = c(zz,
-                                       NA,
-                                       rep(zz, 5)))
+measo_names <- tibble::tibble(name = measo_regions05$name,
+                              sector = rep(sec, each = 4),
+                              zone = zz)
 usethis::use_data(measo_names, overwrite = TRUE)
-usethis::use_data(measo_regions04_ll)
-usethis::use_data(measo_regions04)
+usethis::use_data(measo_regions05_ll)
+usethis::use_data(measo_regions05)
+
 
 
