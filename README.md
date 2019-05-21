@@ -64,7 +64,7 @@ supposed to be part of MEASO. They share a sector but have no assigned
 zone. From `colour_values` on zone they get black.
 
 ``` r
-par(mar = rep(0, 4))
+par(mar = rep(0.2, 4))
 plot(st_geometry(measo_regions05_ll), reset = FALSE, 
      col = colourvalues::colour_values(measo_names$sector, alpha = 0.5))
 cds <- st_coordinates(st_centroid(measo_regions05_ll))
@@ -72,12 +72,15 @@ cds <- st_coordinates(st_centroid(measo_regions05_ll))
 #> of_largest_polygon): st_centroid does not give correct centroids for
 #> longitude/latitude data
 text(cds, lab = measo_names$name)
-title("name")
+par(xpd = NA)
+text(0, -20, "name", cex = 0.7)
+maps::map(add = TRUE)
 ```
 
 <img src="man/figures/README-dummy-1.png" width="100%" />
 
 ``` r
+par(xpd = TRUE)
 
 plot(st_geometry(measo_regions05_ll), reset = FALSE, 
      col = colourvalues::colour_values(measo_names$zone, alpha = 0.5))
@@ -85,11 +88,35 @@ cds <- st_coordinates(st_centroid(measo_regions05_ll))
 #> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon =
 #> of_largest_polygon): st_centroid does not give correct centroids for
 #> longitude/latitude data
-text(cds, lab = measo_names$name)
-title("zone")
+text(cds, lab = measo_names$zone)
+par(xpd = NA)
+text(0, -20, "zone", cex = 0.7)
+maps::map(add = TRUE)
 ```
 
 <img src="man/figures/README-dummy-2.png" width="100%" />
+
+``` r
+par(xpd = TRUE)
+
+
+plot(st_geometry(measo_regions05_ll), reset = FALSE, 
+     col = colourvalues::colour_values(measo_names$zone, alpha = 0.5))
+cds <- st_coordinates(st_centroid(measo_regions05_ll))
+#> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon =
+#> of_largest_polygon): st_centroid does not give correct centroids for
+#> longitude/latitude data
+text(cds, lab = measo_names$sector)
+par(xpd = NA)
+text(0, -20, "sector", cex = 0.7)
+maps::map(add = TRUE)
+```
+
+<img src="man/figures/README-dummy-3.png" width="100%" />
+
+``` r
+par(xpd = TRUE)
+```
 
 -----
 
