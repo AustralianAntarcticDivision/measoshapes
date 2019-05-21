@@ -67,7 +67,7 @@ st_write(measo_regions05_ll_coastline, "myfile.shp", driver = "SHP")
 ```
 
 
-Here we explore the names in more detail. The northern regions are assigned codes that include "T" for **tropical**, but they aren't supposed to be part of MEASO. They share a sector but have no assigned zone. From `colour_values` on zone they get black. 
+Here we explore the names in more detail. The northern regions are assigned codes that include "T" for **temperate**, but they aren't supposed to be part of MEASO. They share a sector but have no assigned zone. From `colour_values` on zone they get black. 
 
 ```{r dummy}
 par(mar = rep(0.2, 4))

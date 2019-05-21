@@ -59,7 +59,7 @@ st_write(measo_regions05_ll_coastline, "myfile.shp", driver = "SHP")
 ```
 
 Here we explore the names in more detail. The northern regions are
-assigned codes that include “T” for **tropical**, but they aren’t
+assigned codes that include “T” for **temperate**, but they aren’t
 supposed to be part of MEASO. They share a sector but have no assigned
 zone. From `colour_values` on zone they get black.
 
@@ -71,9 +71,9 @@ cds <- st_coordinates(st_centroid(measo_regions05_ll))
 #> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon =
 #> of_largest_polygon): st_centroid does not give correct centroids for
 #> longitude/latitude data
-text(cds, lab = measo_names$name)
+text(cds, lab = measo_names$name, cex = 0.7)
 par(xpd = NA)
-text(0, -20, "name", cex = 0.7)
+text(0, -20, "name")
 maps::map(add = TRUE)
 ```
 
@@ -88,9 +88,9 @@ cds <- st_coordinates(st_centroid(measo_regions05_ll))
 #> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon =
 #> of_largest_polygon): st_centroid does not give correct centroids for
 #> longitude/latitude data
-text(cds, lab = measo_names$zone)
+text(cds, lab = measo_names$zone, cex = 0.7)
 par(xpd = NA)
-text(0, -20, "zone", cex = 0.7)
+text(0, -20, "zone")
 maps::map(add = TRUE)
 ```
 
@@ -106,9 +106,9 @@ cds <- st_coordinates(st_centroid(measo_regions05_ll))
 #> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon =
 #> of_largest_polygon): st_centroid does not give correct centroids for
 #> longitude/latitude data
-text(cds, lab = measo_names$sector)
+text(cds, lab = measo_names$sector, cex = 0.7)
 par(xpd = NA)
-text(0, -20, "sector", cex = 0.7)
+text(0, -20, "sector")
 maps::map(add = TRUE)
 ```
 
