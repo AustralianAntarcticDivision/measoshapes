@@ -95,7 +95,7 @@ library(SOmap)
 #>     select
 SOmap(trim = -32) ## set up a polar map
 ## set overlay to half-transparent
-SOplot(st_geometry(measo), border = NA, col = scales::alpha(measo$fill, 0.5))  ## no need to worry about the projection
+SOplot(st_geometry(measo), border = NA, col = scales::alpha(measo$fill, 0.75))  ## no need to worry about the projection
 #> Warning in if (class(x) == "character") {: the condition has length > 1 and only
 #> the first element will be used
 #> Warning in if (class(x) != "CRS") {: the condition has length > 1 and only the
@@ -108,6 +108,12 @@ ll <- cbind(lon = c(147, 100, -10, -80),
 SOplot(ll, pch = 1:4, col = viridis::viridis(4), cex = 3, lwd = 4)
 #> Warning in SOproj(x = x, y = y, target = target, source = source, ...): assuming
 #> generic data is in longitude,latitude
+
+## other objects work too (sf, raster, sp)
+SOplot(SOmap_data$fronts_park)
+#> Warning in plot.sf(SObj, add = add, ...): ignoring all but the first attribute
+SOplot(coast, col = "#808080")
+#> Warning in plot.sf(SObj, add = add, ...): ignoring all but the first attribute
 ```
 
 <img src="man/figures/README-SOmap-1.png" width="100%" />
