@@ -58,6 +58,8 @@ plot(st_geometry(coast), col = "#808080", add = TRUE, border = NA)
 
 <img src="man/figures/README-coast-1.png" width="100%" />
 
+## Map with ggplot2
+
 A ggplot2 example. To use the literal fill colours we need
 `scale_fill_identity()`, this is ggplot’s “straight-through” mechanism.
 
