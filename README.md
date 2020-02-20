@@ -28,43 +28,12 @@ features so that the seam at the anti-meridian is removed.
 
 ``` r
 library(measoshapes)
-#> Loading required package: sf
-#> Linking to GEOS 3.6.1, GDAL 2.2.3, PROJ 4.9.3
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(sf)
 
 measo <- measo_regions05 %>% group_by(name) %>% summarize() %>% 
   inner_join(measo_names)
 #> Joining, by = "name"
-measo
-#> Simple feature collection with 24 features and 4 fields
-#> geometry type:  POLYGON
-#> dimension:      XY
-#> bbox:           xmin: -6381686 ymin: -6381694 xmax: 6381694 ymax: 6381694
-#> epsg (SRID):    NA
-#> proj4string:    +proj=laea +lat_0=-90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs
-#> # A tibble: 24 x 5
-#>    name                                        geometry sector    zone    fill  
-#>    <chr>                                  <POLYGON [m]> <chr>     <chr>   <chr> 
-#>  1 AOA   ((-2891647 1737477, -2906527 1746418, -292140~ Atlantic  Antarc~ #BCEC~
-#>  2 AON   ((2613013 4525871, 2602873 4508308, 2592725 4~ Atlantic  Northe~ #054e~
-#>  3 AOS   ((1842392 3191116, 1832256 3196946, 1822102 3~ Atlantic  Subant~ #1094~
-#>  4 AOT   ((-3353009 1723416, -3368360 1722003, -338371~ Atlantic  <NA>    #0000~
-#>  5 CIA   ((279139.2 483483.3, 290257.6 502741, 301375.~ CentralI~ Antarc~ #FFFF~
-#>  6 CIN   ((2294977 3975017, 2305351 3992985, 2315718 4~ CentralI~ Northe~ #4B7D~
-#>  7 CIS   ((1842392 3191116, 1852809 3209160, 1863221 3~ CentralI~ Subant~ #5F9E~
-#>  8 CIT   ((2613013 4525871, 2623059 4543271, 2633097 4~ CentralI~ <NA>    #0000~
-#>  9 EIA   ((3048452 -1421517, 3044304 -1430378, 3040131~ EastIndi~ Antarc~ #EAFA~
-#> 10 EIN   ((4093993 -1909060, 4112624 -1917748, 4131243~ EastIndi~ Northe~ #0160~
-#> # ... with 14 more rows
 ```
 
 Now, plot the geometry with the offical colours and make sure no ‘reset’
@@ -84,12 +53,21 @@ coast <- st_transform(coast,
                       st_crs(measo))
 
 plot(st_geometry(measo), col = measo$fill, reset = FALSE, border = NA)
-plot(coast, col = "#808080", add = TRUE, border = NA)
-#> Warning in plot.sf(coast, col = "#808080", add = TRUE, border = NA): ignoring
-#> all but the first attribute
+plot(st_geometry(coast), col = "#808080", add = TRUE, border = NA)
 ```
 
 <img src="man/figures/README-coast-1.png" width="100%" />
+
+A ggplot2 example. To use the literal fill colours we need
+`scale_fill_identity()`, this is ggplot’s “straight-through” mechanism.
+
+``` r
+
+library(ggplot2)
+ggplot(measo, aes(fill = fill)) + geom_sf(colour = NA) + scale_fill_identity() + geom_sf(data = coast, aes(fill = NULL))
+```
+
+<img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
 
 ## Data sets
 
