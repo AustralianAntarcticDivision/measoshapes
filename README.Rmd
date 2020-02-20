@@ -11,7 +11,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  fig.width = 7, fig.height = 7
 )
 ```
 # measoshapes
@@ -27,6 +28,42 @@ To install measoshapes from Github use
 ```R
 ## install.packages("remotes")
 remotes::install_github("AustralianAntarcticDivision/measoshapes")
+```
+
+## Map
+
+To map the regions with base plotting (with the [sf package](https://r-spatial.github.io/sf)). 
+
+First join the names and properties to the geometry, we also group the features so that the seam at the anti-meridian is
+removed. 
+
+```{r join}
+library(measoshapes)
+library(dplyr)
+library(sf)
+
+measo <- measo_regions05 %>% group_by(name) %>% summarize() %>% 
+  inner_join(measo_names)
+measo
+```
+
+Now, plot the geometry with the offical colours and make sure no 'reset' so that we can add other layers. 
+
+```{r plot}
+plot(st_geometry(measo), col = measo$fill, reset = FALSE, border = NA)
+```
+
+A very simple coastline data is added. 
+
+```{r coast}
+coast <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>% dplyr::filter(sovereignt == "Antarctica")
+coast <- st_transform(coast, 
+                      st_crs(measo))
+
+plot(st_geometry(measo), col = measo$fill, reset = FALSE, border = NA)
+plot(coast, col = "#808080", add = TRUE, border = NA)
+
+
 ```
 
 
