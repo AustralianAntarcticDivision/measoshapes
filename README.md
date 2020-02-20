@@ -71,6 +71,47 @@ ggplot(measo, aes(fill = fill)) + geom_sf(colour = NA) + scale_fill_identity() +
 
 <img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
 
+## Map with SOmap
+
+The [SOmap
+package](https://github.com/AustralianAntarcticDivision/SOmap) provides
+some simpler ways of creating and adding to polar maps. Once a map is
+set up it knows what projection it is in, so we can forget about having
+to transform the data.
+
+We can add arbitrary data at longitude/latitudes pairs and SOplot knows
+what to do.
+
+``` r
+## atm we need a special branch (2020-02-20)
+#remotes::install_github("AustralianAntarcticDivision/SOmap@dev-0.6")
+library(SOmap)
+#> Loading required package: raster
+#> Loading required package: sp
+#> 
+#> Attaching package: 'raster'
+#> The following object is masked from 'package:dplyr':
+#> 
+#>     select
+SOmap(trim = -32) ## set up a polar map
+## set overlay to half-transparent
+SOplot(st_geometry(measo), border = NA, col = scales::alpha(measo$fill, 0.5))  ## no need to worry about the projection
+#> Warning in if (class(x) == "character") {: the condition has length > 1 and only
+#> the first element will be used
+#> Warning in if (class(x) != "CRS") {: the condition has length > 1 and only the
+#> first element will be used
+#> Warning in SOproj(x = x, y = y, target = target, source = source, ...): assuming
+#> generic data is in longitude,latitude
+
+ll <- cbind(lon = c(147, 100, -10, -80), 
+            lat = c(-42, -50, -70, -50))
+SOplot(ll, pch = 1:4, col = viridis::viridis(4), cex = 3, lwd = 4)
+#> Warning in SOproj(x = x, y = y, target = target, source = source, ...): assuming
+#> generic data is in longitude,latitude
+```
+
+<img src="man/figures/README-SOmap-1.png" width="100%" />
+
 ## Data sets
 
 There is no code in the measoshapes package, but the package records the

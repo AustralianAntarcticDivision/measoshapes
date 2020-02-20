@@ -123,7 +123,7 @@ fill <- c("#04405CFF",
                          10,8,7,NA,
                          9,5,3,NA,
                          6,4,2,NA)]
-fill[is.na(fill)] <- "#00000000"
+fill[is.na(fill)] <- NA
 measo_names <- tibble::tibble(name = measo_regions05$name,
                               sector = rep(sec, each = 4),
                               zone = zz,
