@@ -1,3 +1,9 @@
+# measoshapes 0.0.05.1
+
+* Extend the shapes southerer. 
+
+* Added colours. 
+
 # measoshapes 0.0.05
 
 * Release "05" creates "_coastline" versions in polar and in longitude/latitude. 
