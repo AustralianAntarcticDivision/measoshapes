@@ -3,3 +3,7 @@
 ^measoshapes\.Rproj$
 ^\.Rproj\.user$
 ^CODE_OF_CONDUCT\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
