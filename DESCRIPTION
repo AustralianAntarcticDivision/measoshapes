@@ -22,5 +22,6 @@ Roxygen: list(markdown = TRUE)
 Suggests: 
     knitr,
     rmarkdown,
-    patchwork
+    patchwork,
+    dplyr
 VignetteBuilder: knitr
