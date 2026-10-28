@@ -1,0 +1,56 @@
+project:
+  type: website
+  output-dir: _site
+  ## render only the site's own pages: package/ (pkgdown output, with .md copies of its pages)
+  ## is copied as it is
+  render:
+    - "*.qmd"
+    - "!package/"
+  ## copy the version 06 files from ../inst/extdata into data/v06 (published at stable URLs)
+  pre-render: copy-data.ts
+  ## package/ is the pkgdown documentation of the R package, built by pkgdown::build_site()
+  ## (see ../_pkgdown.yml)
+  resources:
+    - data/
+    - package/
+    - web-demo.js
+
+execute:
+  freeze: auto
+
+website:
+  title: "MEASO regions"
+  description: "Southern Ocean regions for the Marine Ecosystem Assessment for the Southern Ocean"
+  site-url: https://australianantarcticdivision.github.io/measoshapes/
+  repo-url: https://github.com/AustralianAntarcticDivision/measoshapes
+  repo-subdir: site
+  repo-actions: [issue, source]
+  page-navigation: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - definition.qmd
+      - illustrations.qmd
+      - data.qmd
+      - text: "Use"
+        menu:
+          - r.qmd
+          - python.qmd
+          - duckdb.qmd
+          - web.qmd
+          - qgis.qmd
+      - news.qmd
+      - text: "R package"
+        href: package/index.html
+    right:
+      - icon: github
+        href: https://github.com/AustralianAntarcticDivision/measoshapes
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+    fig-width: 7
+    fig-height: 7

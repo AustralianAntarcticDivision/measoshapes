@@ -1,0 +1,71 @@
+---
+title: "Python"
+subtitle: "Reading the regions with geopandas, and assigning regions to data"
+---
+
+The examples use [geopandas](https://geopandas.org/). Code on this page is not run when the site is built.
+
+## Reading
+
+GeoParquet, from a URL (needs `fsspec` and `aiohttp`) or a local file:
+
+```python
+import geopandas as gpd
+
+base = "https://australianantarcticdivision.github.io/measoshapes/data/v06"
+regions = gpd.read_parquet(f"{base}/measo_regions06.parquet")
+regions_ll = gpd.read_parquet(f"{base}/measo_regions06_ll.parquet")
+regions.crs
+```
+
+FlatGeobuf or GeoJSON are read with GDAL (via [pyogrio](https://pyogrio.readthedocs.io/)), which reads URLs
+directly:
+
+```python
+regions = gpd.read_file(f"{base}/measo_regions06.fgb")
+```
+
+## Assigning regions to data
+
+geopandas works in the plane, which matches the regions' definition (boundaries straight in
+longitude/latitude), so longitude/latitude points can be joined directly to `measo_regions06_ll`:
+
+```python
+import pandas as pd
+
+pts = pd.DataFrame({"lon": [147.3, 100.5, -10.5, -82.5, 171.5, -175.5],
+                    "lat": [-50.2, -60.5, -70.5, -45.5, -65.5, -65.5]})
+pts = gpd.GeoDataFrame(pts, geometry=gpd.points_from_xy(pts.lon, pts.lat), crs="OGC:CRS84")
+gpd.sjoin(pts, regions_ll, how="left", predicate="within")[["lon", "lat", "name", "label"]]
+```
+
+```
+     lon   lat name         sector       zone
+0  147.3 -50.2  EIN     EastIndian   Northern
+1  100.5 -60.5  CIA  CentralIndian  Antarctic
+2  -10.5 -70.5  AOA       Atlantic  Antarctic
+3  -82.5 -45.5  EPN    EastPacific   Northern
+4  171.5 -65.5  WPA    WestPacific  Antarctic
+5 -175.5 -65.5  WPA    WestPacific  Antarctic
+```
+
+A point exactly on a boundary (common for gridded data, as many boundaries run along whole or half
+degrees) is *within* neither region; use `predicate="intersects"` to get both.
+
+## Areas
+
+Use the polar equal area version:
+
+```python
+regions.assign(area_km2=regions.area / 1e6)[["name", "area_km2"]]
+```
+
+## Maps
+
+The `fill` column has the colours:
+
+```python
+ax = regions.plot(color=regions["fill"].fillna("#FFFFFF"),
+                  edgecolor="grey", linewidth=0.5)
+ax.set_axis_off()
+```

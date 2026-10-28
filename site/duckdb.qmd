@@ -1,0 +1,74 @@
+---
+title: "DuckDB"
+subtitle: "Querying the regions with SQL, directly from the URL"
+---
+
+[DuckDB](https://duckdb.org/) reads GeoParquet over HTTP, and with the
+[spatial extension](https://duckdb.org/docs/extensions/spatial/overview) the geometry column is a
+`GEOMETRY`. The same SQL works in the DuckDB CLI, and from R, Python, or the browser. Code on this page
+is not run when the site is built.
+
+## Setup
+
+```sql
+INSTALL spatial;
+LOAD spatial;
+SET VARIABLE base = 'https://australianantarcticdivision.github.io/measoshapes/data/v06';
+```
+
+## Read
+
+```sql
+SELECT name, label, fill
+FROM read_parquet(getvariable('base') || '/measo_regions06_ll.parquet');
+```
+
+## Assign regions to points
+
+DuckDB spatial works in the plane, which matches the regions' definition (boundaries straight in
+longitude/latitude), so longitude/latitude points are tested against `measo_regions06_ll` directly:
+
+```sql
+WITH pts AS (
+  SELECT * FROM (VALUES (147.3, -50.2), (100.5, -60.5), (-10.5, -70.5), (-82.5, -45.5), (171.5, -65.5), (-175.5, -65.5))
+    AS t(lon, lat)
+)
+SELECT pts.lon, pts.lat, r.name, r.sector, r.zone
+FROM pts
+LEFT JOIN read_parquet(getvariable('base') || '/measo_regions06_ll.parquet') AS r
+  ON ST_Within(ST_Point(pts.lon, pts.lat), r.geometry)
+ORDER BY ALL;
+```
+
+For a table of your own, replace `pts` with e.g. `read_csv('obs.csv')`.
+
+Many boundaries run along whole or half degrees of longitude and latitude, so data on a regular grid can
+fall exactly on a boundary. Such a point is *within* neither region; use `ST_Intersects` instead of
+`ST_Within` to get both regions (and then choose one).
+
+## Areas
+
+Use the polar equal area version:
+
+```sql
+SELECT name, round(ST_Area(geometry) / 1e6) AS area_km2
+FROM read_parquet(getvariable('base') || '/measo_regions06.parquet')
+ORDER BY area_km2 DESC;
+```
+
+## From R and Python
+
+```r
+library(duckdb)
+con <- dbConnect(duckdb())
+dbExecute(con, "INSTALL spatial; LOAD spatial;")
+dbGetQuery(con, "SELECT name, sector, zone FROM read_parquet('https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06_ll.parquet')")
+```
+
+```python
+import duckdb
+duckdb.sql("INSTALL spatial; LOAD spatial;")
+duckdb.sql("SELECT name, sector, zone FROM read_parquet('https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06_ll.parquet')")
+```
+
+In the browser, DuckDB-Wasm runs the same queries: see [Web](web.qmd).

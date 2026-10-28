@@ -1,0 +1,7 @@
+/.quarto/
+/_site/
+/data/
+/site_libs/
+/package/
+
+**/*.quarto_ipynb

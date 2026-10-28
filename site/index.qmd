@@ -1,0 +1,58 @@
+---
+title: "MEASO regions"
+subtitle: "Southern Ocean regions for the Marine Ecosystem Assessment for the Southern Ocean"
+toc: false
+---
+
+```{r}
+#| include: false
+source("_setup.R")
+```
+
+The MEASO regions divide the Southern Ocean into **five sectors** and **three zones**, giving 15 regions
+for assessment, summary and comparison. A fourth, northern band in each sector (the "T" regions) covers
+the remaining ocean to 30°S so that any location in the domain falls in exactly one region.
+
+```{r}
+#| label: fig-home
+#| fig-cap: "MEASO regions (version 06) in the colours of the MEASO Summary for Policymakers, with the Antarctic continent (grey) cut out. T regions (outside MEASO) are outlined only."
+#| echo: false
+#| fig-width: 7
+#| fig-height: 7
+x <- measo_regions06_coastline
+par(mar = rep(0, 4))
+plot(st_union(st_geometry(measo_regions06)), col = "grey80", border = NA)  ## continent shows through
+plot(st_geometry(x), col = x$fill, border = "grey60", lwd = 0.3, add = TRUE)
+pos <- st_coordinates(suppressWarnings(st_point_on_surface(st_geometry(measo_regions06))))
+keep <- !is.na(x$zone)
+text(pos[keep, , drop = FALSE], x$name[keep], cex = 0.7, col = "grey20")
+```
+
+## Get the data
+
+| Format | Polar (equal area) | Longitude/latitude | EPSG:3031 |
+|---|---|---|---|
+| GeoParquet | [measo_regions06.parquet](data/v06/measo_regions06.parquet) | [measo_regions06_ll.parquet](data/v06/measo_regions06_ll.parquet) | [measo_regions06_epsg_3031.parquet](data/v06/measo_regions06_epsg_3031.parquet) |
+| FlatGeobuf | [measo_regions06.fgb](data/v06/measo_regions06.fgb) | [measo_regions06_ll.fgb](data/v06/measo_regions06_ll.fgb) | [measo_regions06_epsg_3031.fgb](data/v06/measo_regions06_epsg_3031.fgb) |
+| GeoJSON | | [measo_regions06_ll.geojson](data/v06/measo_regions06_ll.geojson) | |
+| QGIS style | [measo_regions06.qml](data/v06/measo_regions06.qml) | | |
+
+Each file has one row per region with columns `name`, `label` (e.g. "Antarctic Atlantic"), `sector`,
+`zone` and `fill` (the region's colour).
+See [Data](data.qmd) for details and stable URLs, and the **Use** menu for reading the regions
+in [R](r.qmd), [Python](python.qmd), [DuckDB](duckdb.qmd), [the browser](web.qmd) and [QGIS](qgis.qmd).
+
+In R, the [measoshapes](https://github.com/AustralianAntarcticDivision/measoshapes) package provides
+the regions as data sets:
+
+```r
+remotes::install_github("AustralianAntarcticDivision/measoshapes")
+library(measoshapes)
+measo_regions06
+```
+
+## How the regions are defined
+
+The regions are built from lines: sector boundaries, three simplified ocean fronts, and the domain
+edges (85°S to 30°S, all longitudes). Their boundaries are straight lines in longitude/latitude.
+See [Definition](definition.qmd).

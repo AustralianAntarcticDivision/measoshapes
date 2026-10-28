@@ -6,8 +6,7 @@
 \alias{measoshapes-package}
 \title{measoshapes: Southern Ocean Shapes for 'MEASO' work.}
 \description{
-Provides Southern Ocean Shapes for 'MEASO' work, a Marine Ecosystem
- Assessment for the Southern Ocean.
+Provides Southern Ocean Shapes for 'MEASO' work, a Marine Ecosystem Assessment for the Southern Ocean.
 }
 \seealso{
 Useful links:
@@ -19,6 +18,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Michael D. Sumner \email{michael.sumner@aad.gov.au}
+
+Authors:
+\itemize{
+  \item Michael D. Sumner \email{michael.sumner@aad.gov.au}
+}
 
 Other contributors:
 \itemize{

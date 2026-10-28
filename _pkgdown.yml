@@ -1,4 +1,17 @@
-url: ~
+## The package documentation is built into the website (site/), at /measoshapes/package/:
+## pkgdown::build_site() writes site/package/, and Quarto publishes it as a resource.
+url: https://australianantarcticdivision.github.io/measoshapes/package/
+destination: site/package
+
 template:
   bootstrap: 5
+  bootswatch: cosmo  ## as the website
 
+navbar:
+  structure:
+    left: [website, reference, articles, news]
+    right: [search, github]
+  components:
+    website:
+      text: MEASO regions website
+      href: ../index.html

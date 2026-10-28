@@ -1,0 +1,17 @@
+{
+  "hash": "3ef52cedd910f5494a9f7822b9258fda",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"MEASO regions\"\nsubtitle: \"Southern Ocean regions for the Marine Ecosystem Assessment for the Southern Ocean\"\ntoc: false\n---\n\n\n\nThe MEASO regions divide the Southern Ocean into **five sectors** and **three zones**, giving 15 regions\nfor assessment, summary and comparison. A fourth, northern band in each sector (the \"T\" regions) covers\nthe remaining ocean to 30°S so that any location in the domain falls in exactly one region.\n\n\n::: {.cell}\n::: {.cell-output-display}\n![MEASO regions (version 06) in the colours of the MEASO Summary for Policymakers, with the Antarctic continent (grey) cut out. T regions (outside MEASO) are outlined only.](index_files/figure-html/fig-home-1.png){#fig-home width=672}\n:::\n:::\n\n\n## Get the data\n\n| Format | Polar (equal area) | Longitude/latitude | EPSG:3031 |\n|---|---|---|---|\n| GeoParquet | [measo_regions06.parquet](data/v06/measo_regions06.parquet) | [measo_regions06_ll.parquet](data/v06/measo_regions06_ll.parquet) | [measo_regions06_epsg_3031.parquet](data/v06/measo_regions06_epsg_3031.parquet) |\n| FlatGeobuf | [measo_regions06.fgb](data/v06/measo_regions06.fgb) | [measo_regions06_ll.fgb](data/v06/measo_regions06_ll.fgb) | [measo_regions06_epsg_3031.fgb](data/v06/measo_regions06_epsg_3031.fgb) |\n| GeoJSON | | [measo_regions06_ll.geojson](data/v06/measo_regions06_ll.geojson) | |\n| QGIS style | [measo_regions06.qml](data/v06/measo_regions06.qml) | | |\n\nEach file has one row per region with columns `name`, `label` (e.g. \"Antarctic Atlantic\"), `sector`,\n`zone` and `fill` (the region's colour).\nSee [Data](data.qmd) for details and stable URLs, and the **Use** menu for reading the regions\nin [R](r.qmd), [Python](python.qmd), [DuckDB](duckdb.qmd), [the browser](web.qmd) and [QGIS](qgis.qmd).\n\nIn R, the [measoshapes](https://github.com/AustralianAntarcticDivision/measoshapes) package provides\nthe regions as data sets:\n\n```r\nremotes::install_github(\"AustralianAntarcticDivision/measoshapes\")\nlibrary(measoshapes)\nmeaso_regions06\n```\n\n## How the regions are defined\n\nThe regions are built from lines: sector boundaries, three simplified ocean fronts, and the domain\nedges (85°S to 30°S, all longitudes). Their boundaries are straight lines in longitude/latitude.\nSee [Definition](definition.qmd).\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

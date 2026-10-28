@@ -1,0 +1,99 @@
+---
+title: "Data"
+subtitle: "Files, stable URLs, and what's in them"
+---
+
+```{r}
+#| include: false
+source("_setup.R")
+```
+
+## Files
+
+The regions are published at stable URLs under
+
+```
+https://australianantarcticdivision.github.io/measoshapes/data/v06/
+```
+
+The same files are in the R package, in
+[inst/extdata](https://github.com/AustralianAntarcticDivision/measoshapes/tree/main/inst/extdata)
+(find them with `system.file("extdata", package = "measoshapes")`), and are created by
+[data-raw/export.R](https://github.com/AustralianAntarcticDivision/measoshapes/blob/main/data-raw/export.R).
+
+```{r}
+#| label: tbl-files
+#| echo: false
+f <- list.files(dd, pattern = "(parquet|fgb|geojson)$")
+info <- do.call(rbind, lapply(f, function(file) {
+  x <- read_sf(file.path(dd, file))
+  crs <- if (grepl("_ll", file)) "longitude/latitude (OGC:CRS84)"
+         else if (grepl("3031", file)) "polar stereographic (EPSG:3031)"
+         else "polar equal area (LAEA, ≡ EPSG:6932)"
+  data.frame(file = sprintf("[%s](%s/%s)", file, base_url, file),
+             crs = crs,
+             geometry = paste(unique(as.character(st_geometry_type(x))), collapse = ", "),
+             rows = nrow(x),
+             size = sprintf("%.0f kB", file.size(file.path(dd, file)) / 1024))
+}))
+info <- info[order(info$crs, info$file), ]
+knitr::kable(info, row.names = FALSE)
+```
+
+and a QGIS style, [measo_regions06.qml](`r base_url`/measo_regions06.qml) (see [QGIS](qgis.qmd)).
+
+Which to use:
+
+* **Polar equal area** (`measo_regions06.*`): areas, maps of the Southern Ocean, overlays with polar data.
+* **Longitude/latitude** (`measo_regions06_ll.*`): assigning regions to longitude/latitude data, web maps.
+  Boundaries are straight in longitude/latitude (see [Definition](definition.qmd)).
+* **EPSG:3031** (`measo_regions06_epsg_3031.*`): polar stereographic maps, e.g. Quantarctica. Not equal area.
+* **GeoParquet** for data tools (R, Python, DuckDB, the browser); **FlatGeobuf** for GIS and streaming;
+  **GeoJSON** for simple web maps.
+
+## Columns
+
+```{r}
+#| label: tbl-columns
+#| echo: false
+x <- read_sf(file.path(dd, "measo_regions06_ll.parquet"))
+x <- as.data.frame(x)[, c("name", "label", "sector", "zone", "fill")]
+x$colour <- ifelse(is.na(x$fill), "",
+                   sprintf('<span style="display:inline-block;width:2.5em;height:1em;background:%s"></span>', x$fill))
+knitr::kable(x, row.names = FALSE, escape = FALSE)
+```
+
+* `name`: region code, sector code then zone code (T for the temperate regions).
+* `label`: full name, zone then sector, e.g. "Antarctic Atlantic".
+* `sector`: one of Atlantic, CentralIndian, EastIndian, WestPacific, EastPacific.
+* `zone`: Antarctic, Subantarctic, Northern; empty for the T regions (outside MEASO).
+* `fill`: the region's colour in the MEASO Summary for Policymakers (Figure 5), as `#RRGGBB`; empty
+  for the T regions.
+
+## Versions
+
+The `v06` in the URL is the version of the regions. Version 06 has the boundaries of version 05, with
+one row per region, labels, and the published colours; see [Definition](definition.qmd#history) and
+[News](news.qmd). Version 05 is available in the R package as released (`measo_regions05`), and as the
+geopackages in
+[inst/extdata](https://github.com/AustralianAntarcticDivision/measoshapes/tree/main/inst/extdata).
+
+## Citing
+
+Please cite the measoshapes package:
+
+> Sumner, M. D. measoshapes: Southern Ocean Shapes for 'MEASO' work. R package version
+> `r read.dcf("../DESCRIPTION", "Version")`. <https://github.com/AustralianAntarcticDivision/measoshapes>
+
+and, for the definition of the MEASO assessment areas:
+
+* Constable, A.J., J. Melbourne-Thomas, M.M.C. Muelbert, S. McCormack, M. Brasier, J.A. Caccavo,
+  R.D. Cavanagh, S.M. Grant, H.J. Griffiths, J. Gutt, S.F. Henley, J. Höfer, A.B. Hollowed,
+  N.M. Johnston, S.A. Morley, E.J. Murphy, M.H. Pinkerton, I.R. Schloss, K.M. Swadling,
+  A.P. Van de Putte (2023) Marine Ecosystem Assessment for the Southern Ocean: Summary for
+  Policymakers. Integrated Climate and Ecosystem Dynamics in the Southern Ocean, Scientific Committee
+  on Antarctic Research, Scientific Committee on Oceanic Research, Integrated Marine Biosphere Research.
+  <https://doi.org/10.5281/zenodo.8359585>
+* McCormack, S.A., J. Melbourne-Thomas, R. Trebilco, J.L. Blanchard, B. Raymond, A. Constable (2021)
+  Decades of dietary data demonstrate regional food web structures in the Southern Ocean. Ecology and
+  Evolution 11(1): 227–241. <https://doi.org/10.1002/ece3.7017>
