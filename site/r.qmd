@@ -1,0 +1,99 @@
+---
+title: "R"
+subtitle: "Reading the regions in R, and assigning regions to data"
+---
+
+```{r}
+#| include: false
+source("_setup.R")
+```
+
+## The measoshapes package
+
+```r
+remotes::install_github("AustralianAntarcticDivision/measoshapes")
+library(measoshapes)
+```
+
+The package has the regions as [sf](https://r-spatial.github.io/sf/) data sets, one row per region
+(20 rows), with columns `name`, `label`, `sector`, `zone` and `fill`:
+
+* `measo_regions06`, `measo_regions06_coastline`: polar equal area
+* `measo_regions06_ll`, `measo_regions06_ll_coastline`: longitude/latitude
+* `measo_names06`: the columns alone
+
+```{r}
+measo_regions06
+```
+
+Version 05 is in the package as released (`measo_regions05` etc., 24 rows with the West Pacific regions
+in two pieces, and `measo_names` row-aligned with them); see the
+[README](https://github.com/AustralianAntarcticDivision/measoshapes#version-05).
+
+The files on the [Data](data.qmd) page (one row per region) are in the package too:
+
+```r
+f <- system.file("extdata/measo_regions06.parquet", package = "measoshapes")
+```
+
+## Reading from a URL
+
+No package installation is needed to read the published files. GDAL reads them directly from the URL.
+
+```r
+u <- "https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06.parquet"
+
+## sf
+x <- sf::read_sf(u)
+
+## terra
+v <- terra::vect(u)
+
+## gdalraster
+lyr <- gdalraster::GDALVector$new(paste0("/vsicurl/", u))
+d <- lyr$fetch(-1)
+lyr$close()
+
+## arrow, geometry as well-known binary (wk/geoarrow)
+library(geoarrow)
+tab <- arrow::read_parquet(u)
+```
+
+FlatGeobuf and GeoJSON work the same way (change the file name), and are a good choice if your GDAL
+doesn't have the Parquet driver (check `"Parquet" %in% sf::st_drivers()$name`).
+
+## Assigning regions to data
+
+To find the region for longitude/latitude locations, transform them to the polar equal area projection
+and join with the polar regions:
+
+```{r}
+regions <- read_sf(file.path(dd, "measo_regions06.parquet"))  ## or the URL above
+pts <- data.frame(lon = c(147.3, 100.5, -10.5, -82.5, 171.5, -175.5),
+                  lat = c(-50.2, -60.5, -70.5, -45.5, -65.5, -65.5))
+p <- st_as_sf(pts, coords = c("lon", "lat"), crs = "OGC:CRS84", remove = FALSE)
+p <- st_join(st_transform(p, st_crs(regions)), regions)
+st_drop_geometry(p)
+```
+
+The polar regions are densified to 0.2° from the longitude/latitude definition, so this agrees with the
+definition except for locations within a very short distance of a boundary.
+
+For gridded data, the same applies: classify cell centres, or rasterize the polar regions onto your grid
+(e.g. `terra::rasterize(terra::vect(regions), grid, field = "name")`).
+
+## Maps
+
+```{r}
+#| label: fig-r-map
+#| fig-cap: "Base graphics with the fill colours."
+par(mar = rep(0, 4))
+plot(st_geometry(regions), col = regions$fill, border = "grey60")
+```
+
+With ggplot2, use the colours as they are with `scale_fill_identity()`:
+
+```r
+library(ggplot2)
+ggplot(regions, aes(fill = fill)) + geom_sf(colour = "grey60") + scale_fill_identity()
+```

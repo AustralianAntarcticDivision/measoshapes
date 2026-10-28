@@ -1,0 +1,55 @@
+---
+title: "QGIS"
+subtitle: "Adding the regions to QGIS, with their colours and labels"
+---
+
+## Add the layer from a URL
+
+In QGIS, **Layer ▸ Add Layer ▸ Add Vector Layer…**, choose **Protocol: HTTP(S), cloud, etc.**, and
+enter a URL:
+
+```
+https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06.fgb
+```
+
+Use FlatGeobuf (`.fgb`), which every recent QGIS can read. GeoParquet (`.parquet`) works if your QGIS
+build includes the GDAL Parquet driver (check **Settings ▸ Options ▸ GDAL ▸ Vector Drivers**). You can
+also download a file from the [Data](data.qmd) page and drag it onto the map.
+
+Which file:
+
+* `measo_regions06.fgb`: polar equal area, for maps of the Southern Ocean and areas.
+* `measo_regions06_epsg_3031.fgb`: polar stereographic (EPSG:3031), to match
+  [Quantarctica](https://www.npolar.no/quantarctica/) and other EPSG:3031 data.
+* `measo_regions06_ll.fgb`: longitude/latitude.
+
+QGIS reprojects layers on the fly, so any of them can be shown in a project in another projection.
+
+## Colours and labels
+
+Download the style [measo_regions06.qml](data/v06/measo_regions06.qml), then in the layer's
+**Properties ▸ Symbology**, choose **Style ▸ Load Style…** and select the file. The regions are
+categorized by `name` with the fill colours and legend labels such as "Antarctic Atlantic (AOA)"; the
+T regions (outside MEASO) are outlined only.
+
+Alternatively, use the `fill` column directly: in **Symbology**, set the fill colour to
+*Data defined override ▸ Edit…* with the expression
+
+```
+coalesce("fill", '#00000000')
+```
+
+and use `label` for labels.
+
+## From the Python console
+
+```python
+base = "https://australianantarcticdivision.github.io/measoshapes/data/v06"
+layer = iface.addVectorLayer(f"/vsicurl/{base}/measo_regions06.fgb", "MEASO regions", "ogr")
+
+import urllib.request, tempfile, os
+qml = os.path.join(tempfile.gettempdir(), "measo_regions06.qml")
+urllib.request.urlretrieve(f"{base}/measo_regions06.qml", qml)
+layer.loadNamedStyle(qml)
+layer.triggerRepaint()
+```

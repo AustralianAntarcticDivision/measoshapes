@@ -1,0 +1,81 @@
+---
+title: "Web"
+subtitle: "The regions in the browser: a web map, region lookup, and DuckDB-Wasm"
+---
+
+The published files can be used directly by web apps: the site serves them with cross-origin access
+allowed, and supports HTTP range requests (used by GeoParquet and FlatGeobuf readers). Everything on
+this page runs in your browser.
+
+## Web map
+
+A [MapLibre GL JS](https://maplibre.org/) map of `measo_regions06_ll.geojson`, with the regions' colours.
+Click a region.
+
+```{=html}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<div id="measo-map" style="height: 480px; width: 100%;"></div>
+```
+
+The Mercator map keeps parallels and meridians straight, so the boundaries are drawn as they are
+defined (see [Definition](definition.qmd)).
+
+The essentials for your own page:
+
+```js
+const url = "https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06_ll.geojson";
+map.on("load", () => {
+  map.addSource("measo", {type: "geojson", data: url});
+  map.addLayer({id: "measo", type: "fill", source: "measo",
+                paint: {"fill-color": ["coalesce", ["get", "fill"], "rgba(0,0,0,0)"]}});
+});
+```
+
+## Region lookup
+
+Which region is a location in? This is a few lines of plain JavaScript: a point-in-polygon test in
+longitude/latitude, matching the regions' definition.
+
+```{=html}
+<div class="row g-2 align-items-center mb-2">
+  <label class="col-sm-2" for="measo-lon">Longitude</label>
+  <input class="col-sm-8 form-range" type="range" id="measo-lon" min="-180" max="180" step="0.5" value="147.5">
+  <label class="col-sm-2" for="measo-lat">Latitude</label>
+  <input class="col-sm-8 form-range" type="range" id="measo-lat" min="-85" max="-30" step="0.5" value="-50.5">
+</div>
+<p><span id="measo-lonlat"></span> &rarr; <span id="measo-hit"></span></p>
+```
+
+```js
+// is point [x, y] inside ring (array of [x, y])? planar ray casting
+function inRing([x, y], ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i], [xj, yj] = ring[j];
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+const inPolygon = (p, rings) => inRing(p, rings[0]) && !rings.slice(1).some(h => inRing(p, h));
+const contains = (geom, p) =>
+  (geom.type === "Polygon" ? [geom.coordinates] : geom.coordinates).some(rings => inPolygon(p, rings));
+
+const hit = regions.features.find(f => contains(f.geometry, [lon, lat]));
+```
+
+## DuckDB-Wasm
+
+[DuckDB-Wasm](https://duckdb.org/docs/api/wasm/overview) queries the GeoParquet file in the browser,
+reading it from the URL.
+
+```{=html}
+<div id="measo-table">Loading DuckDB-Wasm&hellip;</div>
+<script type="module" src="web-demo.js"></script>
+```
+
+The SQL on the [DuckDB](duckdb.qmd) page, including spatial queries, can be run in the
+[DuckDB shell](https://shell.duckdb.org/) in your browser.
+
+All the code for this page is in
+[site/web-demo.js](https://github.com/AustralianAntarcticDivision/measoshapes/blob/main/site/web-demo.js).

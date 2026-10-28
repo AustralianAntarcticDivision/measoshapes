@@ -1,0 +1,46 @@
+project:
+  type: website
+  output-dir: _site
+  ## copy ../inst/extdata into data/v05 (published at stable URLs)
+  pre-render: copy-data.ts
+  resources:
+    - data/
+    - web-demo.js
+
+execute:
+  freeze: auto
+
+website:
+  title: "MEASO regions"
+  description: "Southern Ocean regions for the Marine Ecosystem Assessment for the Southern Ocean"
+  site-url: https://australianantarcticdivision.github.io/measoshapes/
+  repo-url: https://github.com/AustralianAntarcticDivision/measoshapes
+  repo-subdir: site
+  repo-actions: [issue, source]
+  page-navigation: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - definition.qmd
+      - illustrations.qmd
+      - data.qmd
+      - text: "Use"
+        menu:
+          - r.qmd
+          - python.qmd
+          - duckdb.qmd
+          - web.qmd
+          - qgis.qmd
+      - news.qmd
+    right:
+      - icon: github
+        href: https://github.com/AustralianAntarcticDivision/measoshapes
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+    fig-width: 7
+    fig-height: 7
