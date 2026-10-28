@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/web.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/CODE_OF_CONDUCT.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/qgis.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/news.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/articles/map-patches.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/illustrations.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/definition.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/data.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/duckdb.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/index.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/reference/measo_regions05.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/python.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
   <url>
-    <loc>/reference/measoshapes-package.html</loc>
+    <loc>https://australianantarcticdivision.github.io/measoshapes/r.html</loc>
+    <lastmod>2026-10-28T02:37:40.205Z</lastmod>
   </url>
 </urlset>

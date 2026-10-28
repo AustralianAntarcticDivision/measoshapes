@@ -1,1 +1,331 @@
-[{"path":"/CODE_OF_CONDUCT.html","id":null,"dir":"","previous_headings":"","what":"Contributor Code of Conduct","title":"Contributor Code of Conduct","text":"contributors maintainers project, pledge respect people contribute reporting issues, posting feature requests, updating documentation, submitting pull requests patches, activities. committed making participation project harassment-free experience everyone, regardless level experience, gender, gender identity expression, sexual orientation, disability, personal appearance, body size, race, ethnicity, age, religion. Examples unacceptable behavior participants include use sexual language imagery, derogatory comments personal attacks, trolling, public private harassment, insults, unprofessional conduct. Project maintainers right responsibility remove, edit, reject comments, commits, code, wiki edits, issues, contributions aligned Code Conduct. Project maintainers follow Code Conduct may removed project team. Instances abusive, harassing, otherwise unacceptable behavior may reported opening issue contacting one project maintainers. Code Conduct adapted Contributor Covenant (https://www.contributor-covenant.org), version 1.0.0, available https://contributor-covenant.org/version/1/0/0/.","code":""},{"path":"/authors.html","id":null,"dir":"","previous_headings":"","what":"Authors","title":"Authors and Citation","text":"Michael D. Sumner. Author, maintainer. Andrew Constable. Contributor.","code":""},{"path":"/authors.html","id":"citation","dir":"","previous_headings":"","what":"Citation","title":"Authors and Citation","text":"Sumner M (2024). measoshapes: Southern Ocean Shapes 'MEASO' work.. R package version 0.0.05.3, https://github.com/AustralianAntarcticDivision/measoshapes.","code":"@Manual{,   title = {measoshapes: Southern Ocean Shapes for 'MEASO' work.},   author = {Michael D. Sumner},   year = {2024},   note = {R package version 0.0.05.3},   url = {https://github.com/AustralianAntarcticDivision/measoshapes}, }"},{"path":"/index.html","id":"measoshapes","dir":"","previous_headings":"","what":"Southern Ocean Shapes for MEASO work.","title":"Southern Ocean Shapes for MEASO work.","text":"goal measoshapes provide regionalization boundaries MEASO. several -built data sets currently version 05. See explained.","code":""},{"path":"/index.html","id":"installation","dir":"","previous_headings":"","what":"Installation","title":"Southern Ocean Shapes for MEASO work.","text":"install measoshapes Github use","code":"## install.packages(\"remotes\") remotes::install_github(\"AustralianAntarcticDivision/measoshapes\")"},{"path":"/index.html","id":"map","dir":"","previous_headings":"","what":"Map","title":"Southern Ocean Shapes for MEASO work.","text":"map regions base plotting (sf package). First join names properties geometry, also group features seam anti-meridian removed. Now, plot geometry offical colours make sure ‘reset’ can add layers.  simple coastline data added.","code":"library(measoshapes) library(dplyr) library(sf)  measo <- measo_regions05 %>% group_by(name) %>% summarize() %>%    inner_join(measo_names) #> Joining, by = \"name\" plot(st_geometry(measo), col = measo$fill, reset = FALSE, border = NA) coast <- rnaturalearth::ne_countries(scale = \"medium\", returnclass = \"sf\") %>% dplyr::filter(sovereignt == \"Antarctica\") coast <- st_transform(coast,                        st_crs(measo))  plot(st_geometry(measo), col = measo$fill, reset = FALSE, border = NA) plot(st_geometry(coast), col = \"#808080\", add = TRUE, border = NA)"},{"path":"/index.html","id":"map-with-ggplot2","dir":"","previous_headings":"","what":"Map with ggplot2","title":"Southern Ocean Shapes for MEASO work.","text":"ggplot2 example. use literal fill colours need scale_fill_identity(), ggplot’s “straight-” mechanism.","code":"library(ggplot2) ggplot(measo, aes(fill = fill)) + geom_sf(colour = NA) + scale_fill_identity() + geom_sf(data = coast, aes(fill = NULL))"},{"path":"/index.html","id":"map-with-somap","dir":"","previous_headings":"","what":"Map with SOmap","title":"Southern Ocean Shapes for MEASO work.","text":"SOmap package provides simpler ways creating adding polar maps. map set knows projection , can forget transform data. can add arbitrary data longitude/latitudes pairs SOplot knows .","code":"## atm we need a special branch (2020-02-20) #remotes::install_github(\"AustralianAntarcticDivision/SOmap@dev-0.6\") library(SOmap) #> Loading required package: raster #> Loading required package: sp #>  #> Attaching package: 'raster' #> The following object is masked from 'package:dplyr': #>  #>     select SOmap(trim = -32) ## set up a polar map ## set overlay to half-transparent SOplot(st_geometry(measo), border = NA, col = scales::alpha(measo$fill, 0.75))  ## no need to worry about the projection #> Warning in if (class(x) == \"character\") {: the condition has length > 1 and only #> the first element will be used #> Warning in if (class(x) != \"CRS\") {: the condition has length > 1 and only the #> first element will be used #> Warning in SOproj(x = x, y = y, target = target, source = source, ...): assuming #> generic data is in longitude,latitude  ll <- cbind(lon = c(147, 100, -10, -80),              lat = c(-42, -50, -70, -50)) SOplot(ll, pch = 1:4, col = viridis::viridis(4), cex = 3, lwd = 4) #> Warning in SOproj(x = x, y = y, target = target, source = source, ...): assuming #> generic data is in longitude,latitude  ## other objects work too (sf, raster, sp) SOplot(SOmap_data$fronts_park) #> Warning in plot.sf(SObj, add = add, ...): ignoring all but the first attribute SOplot(coast, col = \"#808080\") #> Warning in plot.sf(SObj, add = add, ...): ignoring all but the first attribute"},{"path":"/index.html","id":"data-sets","dir":"","previous_headings":"","what":"Data sets","title":"Southern Ocean Shapes for MEASO work.","text":"code measoshapes package, package records creation shapes layer using standard R mechanisms. five datasets, normal usage, calculating areas, making maps use first three. _coastline forms continent Antarctica cut shapes. measonames dataframe name, sector, zone measo_regions05_ll_coastline polygons continent Antarctica cut measo_regions05_coastline polygons (polar) continent Antarctica cut Two forms polar longitude/latitude form use model overlays (technical reasons). measo_regions05 polygons combination sector zone measo_regions05_ll polygons longitude/latitude form make map can use following code  export shapefile: explore names detail. northern regions assigned codes include “T” temperate, aren’t supposed part MEASO. share sector assigned zone. colour_values zone get black.    Please note ‘measoshapes’ project released Contributor Code Conduct. contributing project, agree abide terms.","code":"library(measoshapes) plot(measo_regions05_ll_coastline, reset = FALSE) maps::map(add = TRUE, col = \"grey\", fill = FALSE) st_write(measo_regions05_ll_coastline, \"myfile.shp\", driver = \"SHP\") par(mar = rep(0.2, 4)) plot(st_geometry(measo_regions05_ll), reset = FALSE,       col = colourvalues::colour_values(measo_names$sector, alpha = 0.5)) cds <- st_coordinates(st_centroid(measo_regions05_ll)) #> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon = #> of_largest_polygon): st_centroid does not give correct centroids for longitude/ #> latitude data text(cds, lab = measo_names$name, cex = 0.7) par(xpd = NA) text(0, -20, \"name\") maps::map(add = TRUE) par(xpd = TRUE)  plot(st_geometry(measo_regions05_ll), reset = FALSE,       col = colourvalues::colour_values(measo_names$zone, alpha = 0.5)) cds <- st_coordinates(st_centroid(measo_regions05_ll)) #> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon = #> of_largest_polygon): st_centroid does not give correct centroids for longitude/ #> latitude data text(cds, lab = measo_names$zone, cex = 0.7) par(xpd = NA) text(0, -20, \"zone\") maps::map(add = TRUE) par(xpd = TRUE)   plot(st_geometry(measo_regions05_ll), reset = FALSE,       col = colourvalues::colour_values(measo_names$zone, alpha = 0.5)) cds <- st_coordinates(st_centroid(measo_regions05_ll)) #> Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon = #> of_largest_polygon): st_centroid does not give correct centroids for longitude/ #> latitude data text(cds, lab = measo_names$sector, cex = 0.7) par(xpd = NA) text(0, -20, \"sector\") maps::map(add = TRUE) par(xpd = TRUE)"},{"path":"/reference/measo_regions05.html","id":null,"dir":"Reference","previous_headings":"","what":"Sectors and zones for MEASO. — measo_regions05","title":"Sectors and zones for MEASO. — measo_regions05","text":"Data stored 'sf' data frame form, native polar projection. Longitude,latitude version copied '_ll' suffix.  Versions Antarctic coastline baked-'_coastline' suffix.","code":""},{"path":"/reference/measo_regions05.html","id":"details","dir":"Reference","previous_headings":"","what":"Details","title":"Sectors and zones for MEASO. — measo_regions05","text":"Longer names decomposition region 'measo_names'.","code":""},{"path":"/reference/measoshapes-package.html","id":null,"dir":"Reference","previous_headings":"","what":"measoshapes: Southern Ocean Shapes for 'MEASO' work. — measoshapes-package","title":"measoshapes: Southern Ocean Shapes for 'MEASO' work. — measoshapes-package","text":"Provides Southern Ocean Shapes 'MEASO' work, Marine Ecosystem  Assessment Southern Ocean.","code":""},{"path":[]},{"path":"/reference/measoshapes-package.html","id":"author","dir":"Reference","previous_headings":"","what":"Author","title":"measoshapes: Southern Ocean Shapes for 'MEASO' work. — measoshapes-package","text":"Maintainer: Michael D. Sumner michael.sumner@aad.gov.au contributors: Andrew Constable [contributor]","code":""},{"path":"/news/index.html","id":"measoshapes-00051","dir":"Changelog","previous_headings":"","what":"measoshapes 0.0.05.1","title":"measoshapes 0.0.05.1","text":"Extend shapes southerer. Added colours.","code":""},{"path":"/news/index.html","id":"measoshapes-0005","dir":"Changelog","previous_headings":"","what":"measoshapes 0.0.05","title":"measoshapes 0.0.05","text":"Release “05” creates “_coastline” versions polar longitude/latitude. now dummy polygons north sector, classifying data outside primary regions.","code":""},{"path":"/news/index.html","id":"measoshapes-0004","dir":"Changelog","previous_headings":"","what":"measoshapes 0.0.04","title":"measoshapes 0.0.04","text":"Release “04”, renames “WestAtlantic” “Atlantic”","code":""}]
+[
+  {
+    "objectID": "web.html",
+    "href": "web.html",
+    "title": "Web",
+    "section": "",
+    "text": "The published files can be used directly by web apps: the site serves them with cross-origin access allowed, and supports HTTP range requests (used by GeoParquet and FlatGeobuf readers). Everything on this page runs in your browser."
+  },
+  {
+    "objectID": "web.html#web-map",
+    "href": "web.html#web-map",
+    "title": "Web",
+    "section": "Web map",
+    "text": "Web map\nA MapLibre GL JS map of measo_regions06_ll.geojson, with the regions’ colours. Click a region.\n\n\n\nThe Mercator map keeps parallels and meridians straight, so the boundaries are drawn as they are defined (see Definition).\nThe essentials for your own page:\nconst url = \"https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06_ll.geojson\";\nmap.on(\"load\", () =&gt; {\n  map.addSource(\"measo\", {type: \"geojson\", data: url});\n  map.addLayer({id: \"measo\", type: \"fill\", source: \"measo\",\n                paint: {\"fill-color\": [\"coalesce\", [\"get\", \"fill\"], \"rgba(0,0,0,0)\"]}});\n});"
+  },
+  {
+    "objectID": "web.html#region-lookup",
+    "href": "web.html#region-lookup",
+    "title": "Web",
+    "section": "Region lookup",
+    "text": "Region lookup\nWhich region is a location in? This is a few lines of plain JavaScript: a point-in-polygon test in longitude/latitude, matching the regions’ definition.\n\n  Longitude\n  \n  Latitude\n  \n\n → \n// is point [x, y] inside ring (array of [x, y])? planar ray casting\nfunction inRing([x, y], ring) {\n  let inside = false;\n  for (let i = 0, j = ring.length - 1; i &lt; ring.length; j = i++) {\n    const [xi, yi] = ring[i], [xj, yj] = ring[j];\n    if ((yi &gt; y) !== (yj &gt; y) && x &lt; (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;\n  }\n  return inside;\n}\nconst inPolygon = (p, rings) =&gt; inRing(p, rings[0]) && !rings.slice(1).some(h =&gt; inRing(p, h));\nconst contains = (geom, p) =&gt;\n  (geom.type === \"Polygon\" ? [geom.coordinates] : geom.coordinates).some(rings =&gt; inPolygon(p, rings));\n\nconst hit = regions.features.find(f =&gt; contains(f.geometry, [lon, lat]));"
+  },
+  {
+    "objectID": "web.html#duckdb-wasm",
+    "href": "web.html#duckdb-wasm",
+    "title": "Web",
+    "section": "DuckDB-Wasm",
+    "text": "DuckDB-Wasm\nDuckDB-Wasm queries the GeoParquet file in the browser, reading it from the URL.\nLoading DuckDB-Wasm…\n\nThe SQL on the DuckDB page, including spatial queries, can be run in the DuckDB shell in your browser.\nAll the code for this page is in site/web-demo.js."
+  },
+  {
+    "objectID": "qgis.html",
+    "href": "qgis.html",
+    "title": "QGIS",
+    "section": "",
+    "text": "In QGIS, Layer ▸ Add Layer ▸ Add Vector Layer…, choose Protocol: HTTP(S), cloud, etc., and enter a URL:\nhttps://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06.fgb\nUse FlatGeobuf (.fgb), which every recent QGIS can read. GeoParquet (.parquet) works if your QGIS build includes the GDAL Parquet driver (check Settings ▸ Options ▸ GDAL ▸ Vector Drivers). You can also download a file from the Data page and drag it onto the map.\nWhich file:\n\nmeaso_regions06.fgb: polar equal area, for maps of the Southern Ocean and areas.\nmeaso_regions06_epsg_3031.fgb: polar stereographic (EPSG:3031), to match Quantarctica and other EPSG:3031 data.\nmeaso_regions06_ll.fgb: longitude/latitude.\n\nQGIS reprojects layers on the fly, so any of them can be shown in a project in another projection."
+  },
+  {
+    "objectID": "qgis.html#add-the-layer-from-a-url",
+    "href": "qgis.html#add-the-layer-from-a-url",
+    "title": "QGIS",
+    "section": "",
+    "text": "In QGIS, Layer ▸ Add Layer ▸ Add Vector Layer…, choose Protocol: HTTP(S), cloud, etc., and enter a URL:\nhttps://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06.fgb\nUse FlatGeobuf (.fgb), which every recent QGIS can read. GeoParquet (.parquet) works if your QGIS build includes the GDAL Parquet driver (check Settings ▸ Options ▸ GDAL ▸ Vector Drivers). You can also download a file from the Data page and drag it onto the map.\nWhich file:\n\nmeaso_regions06.fgb: polar equal area, for maps of the Southern Ocean and areas.\nmeaso_regions06_epsg_3031.fgb: polar stereographic (EPSG:3031), to match Quantarctica and other EPSG:3031 data.\nmeaso_regions06_ll.fgb: longitude/latitude.\n\nQGIS reprojects layers on the fly, so any of them can be shown in a project in another projection."
+  },
+  {
+    "objectID": "qgis.html#colours-and-labels",
+    "href": "qgis.html#colours-and-labels",
+    "title": "QGIS",
+    "section": "Colours and labels",
+    "text": "Colours and labels\nDownload the style measo_regions06.qml, then in the layer’s Properties ▸ Symbology, choose Style ▸ Load Style… and select the file. The regions are categorized by name with the fill colours and legend labels such as “Antarctic Atlantic (AOA)”; the T regions (outside MEASO) are outlined only.\nAlternatively, use the fill column directly: in Symbology, set the fill colour to Data defined override ▸ Edit… with the expression\ncoalesce(\"fill\", '#00000000')\nand use label for labels."
+  },
+  {
+    "objectID": "qgis.html#from-the-python-console",
+    "href": "qgis.html#from-the-python-console",
+    "title": "QGIS",
+    "section": "From the Python console",
+    "text": "From the Python console\nbase = \"https://australianantarcticdivision.github.io/measoshapes/data/v06\"\nlayer = iface.addVectorLayer(f\"/vsicurl/{base}/measo_regions06.fgb\", \"MEASO regions\", \"ogr\")\n\nimport urllib.request, tempfile, os\nqml = os.path.join(tempfile.gettempdir(), \"measo_regions06.qml\")\nurllib.request.urlretrieve(f\"{base}/measo_regions06.qml\", qml)\nlayer.loadNamedStyle(qml)\nlayer.triggerRepaint()"
+  },
+  {
+    "objectID": "news.html",
+    "href": "news.html",
+    "title": "News",
+    "section": "",
+    "text": "measoshapes 0.0.06\n\nRelease “06” adds measo_regions06 (with _ll, _coastline and _ll_coastline forms) and measo_names06. The boundaries are those of version 05. In version 06:\n\none row per region (20 rows): the WestPacific regions, split at the anti-meridian in 05, are one feature each\nname, label, sector, zone, and fill are on the features; label is the full name, zone then sector, e.g. “Antarctic Atlantic”\nfill is the colour of each region in the MEASO Summary for Policymakers (Constable et al. 2023, Figure 5): each sector has its own hue, light to dark from the Antarctic to the Northern zone\na current crs\n\nVersion 05 is kept as it was released. Its colours have sectors sharing palettes (WestPacific with Atlantic, EastPacific with CentralIndian), and the first WPA row of measo_names has a fill that doesn’t match the second (an error, kept as released).\nFiles for version 06 in ‘inst/extdata’: GeoParquet and FlatGeobuf in polar LAEA, longitude/latitude and EPSG:3031, GeoJSON in longitude/latitude, and a QGIS style. The version 05 geopackages are unchanged.\nAdded references to the MEASO Summary for Policymakers, McCormack et al. (2021), and earlier MEASO documents (citation(\"measoshapes\"), ?measo_regions06).\nKnown: the MEASO Summary for Policymakers describes the Northern zone as “no further north than 40°S”; in the Atlantic (9°W to 10°E) the Northern region (AON) reaches 38.3°S.\n\n\n\nmeasoshapes 0.0.05.1\n\nExtend the shapes southerer.\nAdded colours.\n\n\n\nmeasoshapes 0.0.05\n\nRelease “05” creates “_coastline” versions in polar and in longitude/latitude. There are now dummy polygons in the north for each sector, for classifying data that is outside the primary regions.\n\n\n\nmeasoshapes 0.0.04\n\nRelease “04”, renames “WestAtlantic” to “Atlantic”"
+  },
+  {
+    "objectID": "illustrations.html",
+    "href": "illustrations.html",
+    "title": "Illustrations",
+    "section": "",
+    "text": "All figures on this page are made in R from the published files and the package data sets; expand “Code” to see how."
+  },
+  {
+    "objectID": "illustrations.html#colours",
+    "href": "illustrations.html#colours",
+    "title": "Illustrations",
+    "section": "Colours",
+    "text": "Colours\nThe colours of the MEASO Summary for Policymakers (Figure 5); see Definition.\n\nCode\ncolour_table &lt;- function(x) {\ncell &lt;- function(name, fill) {\n  if (is.na(fill)) return(sprintf(\"&lt;td&gt;%s&lt;/td&gt;\", name))\n  rgb &lt;- col2rgb(fill)\n  fg &lt;- if (sum(rgb * c(0.299, 0.587, 0.114)) &gt; 140) \"black\" else \"white\"\n  sprintf('&lt;td style=\"background:%s;color:%s\"&gt;%s&lt;br&gt;&lt;code style=\"background:none;color:%s\"&gt;%s&lt;/code&gt;&lt;/td&gt;',\n          substr(fill, 1, 7), fg, name, fg, substr(fill, 1, 7))\n}\nzones &lt;- c(\"Antarctic\", \"Subantarctic\", \"Northern\", NA)\nrows &lt;- vapply(unique(x$sector), function(s) {\n  d &lt;- x[x$sector == s, ]\n  cells &lt;- vapply(zones, function(z) {\n    i &lt;- which(if (is.na(z)) is.na(d$zone) else d$zone %in% z)\n    cell(d$name[i], d$fill[i])\n  }, \"\")\n  sprintf(\"&lt;tr&gt;&lt;th&gt;%s&lt;/th&gt;%s&lt;/tr&gt;\", s, paste(cells, collapse = \"\"))\n}, \"\")\ncat('&lt;table class=\"table\" style=\"text-align:center\"&gt;',\n    \"&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;Antarctic&lt;/th&gt;&lt;th&gt;Subantarctic&lt;/th&gt;&lt;th&gt;Northern&lt;/th&gt;&lt;th&gt;(outside)&lt;/th&gt;&lt;/tr&gt;\",\n    rows, \"&lt;/table&gt;\", sep = \"\\n\")\n}\ncolour_table(x)\n\n\n\n\nTable 1: Fill colours by sector and zone (version 06). T regions have no colour.\n\n\n\n\n\n\n\nAntarctic\n\n\nSubantarctic\n\n\nNorthern\n\n\n(outside)\n\n\n\n\nAtlantic\n\n\nAOA#F9BDBC\n\n\nAOS#F27071\n\n\nAON#E11F26\n\n\nAOT\n\n\n\n\nCentralIndian\n\n\nCIA#F9D7C2\n\n\nCIS#F4B187\n\n\nCIN#EC8444\n\n\nCIT\n\n\n\n\nEastIndian\n\n\nEIA#D1D3EA\n\n\nEIS#B0B4D9\n\n\nEIN#878DC5\n\n\nEIT\n\n\n\n\nWestPacific\n\n\nWPA#E0B8D6\n\n\nWPS#C579B2\n\n\nWPN#843A75\n\n\nWPT\n\n\n\n\nEastPacific\n\n\nEPA#9FC5C7\n\n\nEPS#609FA0\n\n\nEPN#4B7E7F\n\n\nEPT\n\n\n\n\n\n\n\nVersion 05 colours\nThe colours of version 05 (measo_names in the R package), as released. Sectors that alternate around the continent share a palette. The first of the two West Pacific Antarctic (WPA) rows in measo_names has a different colour (an error); this table shows the second.\n\nCode\ncolour_table(measo_names[!duplicated(measo_names$name, fromLast = TRUE), ])\n\n\n\n\nTable 2: Fill colours by sector and zone (version 05).\n\n\n\n\n\n\n\nAntarctic\n\n\nSubantarctic\n\n\nNorthern\n\n\n(outside)\n\n\n\n\nEastPacific\n\n\nEPA#FFFFFF\n\n\nEPS#5F9EA0\n\n\nEPN#4B7D7E\n\n\nEPT\n\n\n\n\nAtlantic\n\n\nAOA#BCECFE\n\n\nAOS#1094AF\n\n\nAON#054e70\n\n\nAOT\n\n\n\n\nCentralIndian\n\n\nCIA#FFFFFF\n\n\nCIS#5F9EA0\n\n\nCIN#4B7D7E\n\n\nCIT\n\n\n\n\nEastIndian\n\n\nEIA#EAFAFF\n\n\nEIS#00AFD5\n\n\nEIN#016074\n\n\nEIT\n\n\n\n\nWestPacific\n\n\nWPA#BCECFE\n\n\nWPS#1094AF\n\n\nWPN#054e70\n\n\nWPT"
+  },
+  {
+    "objectID": "illustrations.html#polar-map",
+    "href": "illustrations.html#polar-map",
+    "title": "Illustrations",
+    "section": "Polar map",
+    "text": "Polar map\n\n\nCode\ncst &lt;- measo_regions06_coastline\npar(mar = rep(0, 4))\nplot(st_union(st_geometry(x)), col = \"grey80\", border = NA)  ## continent shows through\nplot(st_geometry(cst), col = cst$fill, border = \"grey60\", lwd = 0.3, add = TRUE)\npos &lt;- st_coordinates(suppressWarnings(st_point_on_surface(st_geometry(x))))\ntext(pos, x$name, cex = 0.7)\n\n\n\n\n\n\n\n\nFigure 1: MEASO regions in the polar equal area projection, with the continent cut out."
+  },
+  {
+    "objectID": "illustrations.html#longitudelatitude-map",
+    "href": "illustrations.html#longitudelatitude-map",
+    "title": "Illustrations",
+    "section": "Longitude/latitude map",
+    "text": "Longitude/latitude map\n\n\nCode\nll &lt;- measo_regions06_ll_coastline\npar(mar = c(2.5, 2.5, 0.5, 0.5))\nplot(st_geometry(ll), col = ifelse(is.na(ll$fill), \"grey97\", ll$fill),\n     border = \"grey50\", axes = TRUE, xlim = c(-180, 180), ylim = c(-85, -30))\n## label positions from the polar centroids\ncds &lt;- st_coordinates(st_transform(st_centroid(st_geometry(measo_regions06)), 4326))\ntext(cds, measo_regions06$name, cex = 0.55)\n\n\n\n\n\n\n\n\nFigure 2: MEASO regions in longitude/latitude. The West Pacific regions are in two parts, either side of the anti-meridian."
+  },
+  {
+    "objectID": "illustrations.html#sectors-and-zones",
+    "href": "illustrations.html#sectors-and-zones",
+    "title": "Illustrations",
+    "section": "Sectors and zones",
+    "text": "Sectors and zones\n\n\nCode\nop &lt;- par(mfrow = c(1, 2), mar = rep(0.2, 4))\n## each sector's hue (its Northern zone colour)\nsec_col &lt;- with(x[x$zone %in% \"Northern\", ], setNames(fill, sector))\nplot(st_geometry(x), col = sec_col[x$sector], border = \"white\")\nlegend(\"bottomleft\", legend = names(sec_col), fill = sec_col, bty = \"n\", cex = 0.7)\nzone_col &lt;- c(Antarctic = \"#BEE7FA\", Subantarctic = \"#0E94AF\", Northern = \"#0A4F70\")\nplot(st_geometry(x), col = ifelse(is.na(x$zone), \"grey95\", zone_col[x$zone]), border = \"white\")\nlegend(\"bottomleft\", legend = c(names(zone_col), \"outside MEASO\"), fill = c(zone_col, \"grey95\"),\n       bty = \"n\", cex = 0.7)\npar(op)\n\n\n\n\n\n\n\n\nFigure 3: Sectors (left, in their hues from Figure 5) and zones (right, in the zone colours of Figure 7) of the MEASO Summary for Policymakers."
+  },
+  {
+    "objectID": "illustrations.html#areas",
+    "href": "illustrations.html#areas",
+    "title": "Illustrations",
+    "section": "Areas",
+    "text": "Areas\nAreas are calculated in the polar equal area projection, for the full regions and with the continent cut out.\n\n\nCode\ntab &lt;- data.frame(name = measo_regions06$name, label = measo_regions06$label,\n                  full = round(as.numeric(st_area(measo_regions06)) / 1e12, 2),\n                  without_continent = round(as.numeric(st_area(measo_regions06_coastline)) / 1e12, 2))\nknitr::kable(tab, row.names = FALSE)\n\n\n\n\nTable 3: Region areas (million km²).\n\n\n\n\n\n\nname\nlabel\nfull\nwithout_continent\n\n\n\n\nAOA\nAntarctic Atlantic\n12.11\n9.89\n\n\nAOS\nSubantarctic Atlantic\n4.49\n4.49\n\n\nAON\nNorthern Atlantic\n4.63\n4.63\n\n\nAOT\nTemperate Atlantic\n11.74\n11.74\n\n\nCIA\nAntarctic Central Indian\n8.02\n3.76\n\n\nCIS\nSubantarctic Central Indian\n8.12\n8.12\n\n\nCIN\nNorthern Central Indian\n3.90\n3.90\n\n\nCIT\nTemperate Central Indian\n9.94\n9.94\n\n\nEIA\nAntarctic East Indian\n4.05\n1.69\n\n\nEIS\nSubantarctic East Indian\n3.70\n3.70\n\n\nEIN\nNorthern East Indian\n3.62\n3.62\n\n\nEIT\nTemperate East Indian\n7.69\n7.69\n\n\nWPA\nAntarctic West Pacific\n5.63\n4.91\n\n\nWPS\nSubantarctic West Pacific\n2.84\n2.84\n\n\nWPN\nNorthern West Pacific\n7.28\n7.28\n\n\nWPT\nTemperate West Pacific\n7.50\n7.50\n\n\nEPA\nAntarctic East Pacific\n3.56\n2.19\n\n\nEPS\nSubantarctic East Pacific\n3.28\n3.28\n\n\nEPN\nNorthern East Pacific\n6.26\n6.26\n\n\nEPT\nTemperate East Pacific\n8.60\n8.60"
+  },
+  {
+    "objectID": "illustrations.html#plots-on-a-map",
+    "href": "illustrations.html#plots-on-a-map",
+    "title": "Illustrations",
+    "section": "Plots on a map",
+    "text": "Plots on a map\nThe regions make a natural layout for small plots of data summarised by region. The map-patches vignette in the R package shows one way to do this with ggplot2 and patchwork."
+  },
+  {
+    "objectID": "definition.html",
+    "href": "definition.html",
+    "title": "Definition",
+    "section": "",
+    "text": "Note\n\n\n\nThis page describes version 06. Its boundaries are those of version 05, built by data-raw/munge-sectors05.R; version 06 is made from version 05 by data-raw/munge-sectors06.R (see History)."
+  },
+  {
+    "objectID": "definition.html#sectors-and-zones",
+    "href": "definition.html#sectors-and-zones",
+    "title": "Definition",
+    "section": "Sectors and zones",
+    "text": "Sectors and zones\nEach region is a combination of a sector and a zone. These are the MEASO assessment areas of the MEASO Summary for Policymakers (Constable et al. 2023, Figure 5), adapted from McCormack et al. (2021); see References.\n\nSectors (west to east from the Pacific): West Pacific, East Pacific, Atlantic, Central Indian, East Indian. Their boundaries are near 125°W, the Drake Passage and Antarctic Peninsula, 30°E, 115°E, and 158–170°E (with a dog-leg at the Ross Sea).\nZones (south to north): Antarctic (south of the Southern Antarctic Circumpolar Current Front, SACCF), Subantarctic (SACCF to the Subantarctic Front, SAF), Northern (SAF to the Subtropical Front, STF).\nNorth of the STF, to 30°S, each sector has a T region (temperate). These are not part of MEASO; they have no zone and no colour, and exist so that every location in the domain falls in exactly one region.\n\nRegion names are the sector code followed by the zone code, e.g. EIS is East Indian Subantarctic.\n\n\n\nSector\nCode\nAntarctic\nSubantarctic\nNorthern\n(outside)\n\n\n\n\nWest Pacific\nWP\nWPA\nWPS\nWPN\nWPT\n\n\nEast Pacific\nEP\nEPA\nEPS\nEPN\nEPT\n\n\nAtlantic\nAO\nAOA\nAOS\nAON\nAOT\n\n\nCentral Indian\nCI\nCIA\nCIS\nCIN\nCIT\n\n\nEast Indian\nEI\nEIA\nEIS\nEIN\nEIT"
+  },
+  {
+    "objectID": "definition.html#construction",
+    "href": "definition.html#construction",
+    "title": "Definition",
+    "section": "Construction",
+    "text": "Construction\nThe regions are not drawn as polygons. They are built from lines:\n\nsector boundary lines, extended from 85°S to 30°S,\nthe three fronts, as simplified, stair-stepped lines around the whole Southern Ocean,\nthe edges of the domain: 85°S, 30°S, and the anti-meridian.\n\nThe lines are noded together and polygonized (sf::st_polygonize()), very small slivers are dropped, and the polygons are named. Because every polygon comes from the same set of lines, the regions share their boundaries exactly: there are no gaps or overlaps, and together they cover the domain.\n\n\nCode\n## sector lines, as in data-raw/munge-sectors05.R\nminlat &lt;- -85; maxlat &lt;- -30\ns &lt;- data.frame(lon = c(-125, -125,  -70, -64.5, -60, -55.054477039271191, -63.799776827053591, -63.799776827053591,\n                        30, 30,   115, 115,   158, 158, 170, 170, 170),\n                lat = c(minlat, maxlat,  minlat, -66, -64, -63.260598133971456, -54.721070105901589, maxlat,\n                        minlat, maxlat,   minlat, maxlat,   minlat, -75, -71.60, -47.50, maxlat),\n                id = c(1, 1, rep(2, 6), 3, 3, 4, 4, rep(5, 5)))\nsectors &lt;- st_sfc(lapply(split(s, s$id), \\(d) st_linestring(cbind(d$lon, d$lat))))\nload(\"../data-raw/zones.Rdata\")\nfronts &lt;- st_geometry(zones)\ndomain &lt;- st_sfc(st_linestring(cbind(c(-180, 180, 180, -180, -180), c(minlat, minlat, maxlat, maxlat, minlat))))\n\nop &lt;- par(mfrow = c(4, 1), mar = c(0.5, 0.5, 1.5, 0.5))\nlim &lt;- list(xlim = c(-180, 180), ylim = c(minlat, maxlat))\nplot(domain, col = \"grey80\", xlim = lim$xlim, ylim = lim$ylim, main = \"(a) sectors\")\nplot(sectors, add = TRUE, lwd = 2)\nplot(domain, col = \"grey80\", main = \"(b) fronts\")\nfcol &lt;- c(\"#1b9e77\", \"#d95f02\", \"#7570b3\")\nplot(fronts, add = TRUE, lwd = 2, col = fcol)\nlegend(\"bottomleft\", legend = c(\"SACCF\", \"SAF\", \"STF\"), col = fcol, lwd = 2, bty = \"n\", horiz = TRUE)\nplot(domain, lwd = 2, main = \"(c) all lines\")\nplot(sectors, add = TRUE); plot(fronts, add = TRUE)\nll &lt;- st_set_crs(measo_regions06_ll, NA)  ## planar, as in (a)-(c)\nplot(st_geometry(ll), col = ifelse(is.na(ll$fill), \"grey95\", ll$fill),\n     border = \"grey40\", main = \"(d) regions\")\npar(op)\n\n\n\n\n\n\n\n\nFigure 1: Construction in longitude/latitude: (a) sector lines, (b) fronts (SACCF, SAF, STF), (c) all lines with the domain, (d) the resulting regions.\n\n\n\n\n\n\nBoundaries are straight in longitude/latitude\nThe regions are defined in longitude/latitude as a plane: each boundary segment is a straight line in longitude and latitude. Most segments run along a parallel or a meridian (the fronts are stair-stepped), so “straight in longitude/latitude” means a boundary at 30°S follows the 30°S parallel. This is the same interpretation as GeoJSON (RFC 7946: “a line between two positions is a straight Cartesian line”).\nThe polar versions are derived from this definition: each boundary is densified to 0.2° in longitude/latitude, then projected to a south polar Lambert Azimuthal Equal Area projection (+proj=laea +lat_0=-90 +lon_0=0 +datum=WGS84, equivalent to EPSG:6932). The polar version can be used directly for areas. The EPSG:3031 (polar stereographic) version is projected from the polar version, for use with Quantarctica and similar.\n\n\nThe anti-meridian\nThe West Pacific sector crosses the anti-meridian (180°), so in longitude/latitude each West Pacific region is two pieces. In version 06 each region is one row: a single polygon in the polar versions, and a two-part multipolygon in longitude/latitude. (In version 05 the pieces are separate rows: 24 rows, WP names appear twice, and measo_names is row-aligned with them.)\n\n\nCoastline\nThe _coastline versions (R package only) have the Antarctic continent cut out. The coastline is the main continental coastline (grounding line), so ice shelves remain part of the regions and islands are not cut out."
+  },
+  {
+    "objectID": "definition.html#colours",
+    "href": "definition.html#colours",
+    "title": "Definition",
+    "section": "Colours",
+    "text": "Colours\nEach MEASO region has the colour it has in the MEASO Summary for Policymakers (Constable et al. 2023, Figure 5, “MEASO assessment areas”, adapted from McCormack et al. 2021; column fill). Each sector has its own hue, light to dark from the Antarctic to the Northern zone, so all 15 regions are distinct. The published figure uses print (CMYK) colours, so the values here are a rendering of it (made with Ghostscript): other renderings differ slightly. See Illustrations.\nVersion 05 had different colours: sectors that alternate around the continent shared a palette (West Pacific with Atlantic, East Pacific with Central Indian, East Indian its own), so some regions had the same colour. The West Pacific and Atlantic palette is close to the zone colours of the Summary for Policymakers (Figure 7). These are recorded in Illustrations."
+  },
+  {
+    "objectID": "definition.html#history",
+    "href": "definition.html#history",
+    "title": "Definition",
+    "section": "History",
+    "text": "History\n\n03 — from the original Manifold project (MEASO03.map), south to 80°S, unnamed northern region.\n04 — “WestAtlantic” renamed to “Atlantic”.\n05 — T regions added in the north of each sector; _coastline versions.\n05.1 — extended south to 85°S; colours added. The first WPA row has a fill that doesn’t match the second (an error, kept as released).\n06 — the boundaries of 05, with one row per region (the anti-meridian split dissolved), labels (“Antarctic Atlantic”), and the colours of the MEASO Summary for Policymakers. Files published as GeoParquet, FlatGeobuf and GeoJSON, with a QGIS style. Version 05 is kept as released."
+  },
+  {
+    "objectID": "definition.html#known-issues-and-open-questions",
+    "href": "definition.html#known-issues-and-open-questions",
+    "title": "Definition",
+    "section": "Known issues and open questions",
+    "text": "Known issues and open questions\n\nNames are assigned by the order of polygons after polygonizing, so the build depends on that order being stable.\nThe south edge is 85°S: the versions without the coastline have a small hole at the pole.\nIn the _coastline versions the continent was cut out in longitude/latitude, closing the coastline at its southernmost latitude (about 84.4°S) rather than at the pole, so a thin band from about 84.4°S to 85°S remains in each Antarctic region (visible near the pole in the maps). This affects areas “without the continent”.\nNear South America the fronts do not reach the Drake Passage sector line, so the Atlantic T region (AOT) extends south to about 55.7°S and the East Pacific T region (EPT) to about 58.9°S there.\nThe MEASO Summary for Policymakers describes the Northern zone as extending to the Subtropical Front “but no further north than 40°S”. Between 9°W and 10°E the (simplified) front used here reaches 38.3°S, so the Atlantic Northern region (AON) extends about 1.7° north of 40°S there (about 30 square degrees). The other sectors’ Northern regions stop at or south of 40°S."
+  },
+  {
+    "objectID": "definition.html#references",
+    "href": "definition.html#references",
+    "title": "Definition",
+    "section": "References",
+    "text": "References\n\nConstable, A.J., J. Melbourne-Thomas, M.M.C. Muelbert, S. McCormack, M. Brasier, J.A. Caccavo, R.D. Cavanagh, S.M. Grant, H.J. Griffiths, J. Gutt, S.F. Henley, J. Höfer, A.B. Hollowed, N.M. Johnston, S.A. Morley, E.J. Murphy, M.H. Pinkerton, I.R. Schloss, K.M. Swadling, A.P. Van de Putte (2023) Marine Ecosystem Assessment for the Southern Ocean: Summary for Policymakers. Integrated Climate and Ecosystem Dynamics in the Southern Ocean, Scientific Committee on Antarctic Research, Scientific Committee on Oceanic Research, Integrated Marine Biosphere Research. https://doi.org/10.5281/zenodo.8359585\nMcCormack, S.A., J. Melbourne-Thomas, R. Trebilco, J.L. Blanchard, B. Raymond, A. Constable (2021) Decades of dietary data demonstrate regional food web structures in the Southern Ocean. Ecology and Evolution 11(1): 227–241. https://doi.org/10.1002/ece3.7017\n\n\nEarlier MEASO documents\nFrom the time of versions 03 to 05 of the regions:\n\nBrasier, M.J., A. Constable, J. Melbourne-Thomas, R. Trebilco, H. Griffiths, A. Van de Putte, M. Sumner (2019) Observations and models to support the first Marine Ecosystem Assessment for the Southern Ocean (MEASO). Journal of Marine Systems 197: 103182. https://doi.org/10.1016/j.jmarsys.2019.05.008\nConstable, A., J. Melbourne-Thomas, R. Trebilco, M. Brasier (2018) Marine Ecosystem Assessment for the Southern Ocean (MEASO). SC-CCAMLR 2018 Background Paper, SC-CAMLR-XXXVII/BG/22. https://figshare.utas.edu.au/articles/report/SC-CCAMLR_2018_Background_Paper_Marine_Ecosystem_Assessment_for_the_Southern_Ocean_MEASO_/23193956\nConstable, A., J. Melbourne-Thomas, R. Trebilco, M. Sumner, M. Brasier (2018) The role of models in facilitating the first Marine Ecosystem Assessment for the Southern Ocean (MEASO). Australian Coastal and Oceans Modelling and Observations meeting, Canberra, October 2018. https://figshare.utas.edu.au/articles/conference_contribution/The_role_of_models_in_facilitating_the_first_Marine_Ecosystem_Assessment_for_the_Southern_Ocean_MEASO_/23154533"
+  },
+  {
+    "objectID": "data.html",
+    "href": "data.html",
+    "title": "Data",
+    "section": "",
+    "text": "The regions are published at stable URLs under\nhttps://australianantarcticdivision.github.io/measoshapes/data/v06/\nThe same files are in the R package, in inst/extdata (find them with system.file(\"extdata\", package = \"measoshapes\")), and are created by data-raw/export.R.\n\n\n\n\nTable 1\n\n\n\n\n\n\nfile\ncrs\ngeometry\nrows\nsize\n\n\n\n\nmeaso_regions06_ll.fgb\nlongitude/latitude (OGC:CRS84)\nMULTIPOLYGON\n20\n13 kB\n\n\nmeaso_regions06_ll.geojson\nlongitude/latitude (OGC:CRS84)\nMULTIPOLYGON\n20\n11 kB\n\n\nmeaso_regions06_ll.parquet\nlongitude/latitude (OGC:CRS84)\nMULTIPOLYGON\n20\n9 kB\n\n\nmeaso_regions06.fgb\npolar equal area (LAEA, ≡ EPSG:6932)\nPOLYGON\n20\n305 kB\n\n\nmeaso_regions06.parquet\npolar equal area (LAEA, ≡ EPSG:6932)\nPOLYGON\n20\n312 kB\n\n\nmeaso_regions06_epsg_3031.fgb\npolar stereographic (EPSG:3031)\nPOLYGON\n20\n306 kB\n\n\nmeaso_regions06_epsg_3031.parquet\npolar stereographic (EPSG:3031)\nPOLYGON\n20\n312 kB\n\n\n\n\n\n\n\n\nand a QGIS style, measo_regions06.qml (see QGIS).\nWhich to use:\n\nPolar equal area (measo_regions06.*): areas, maps of the Southern Ocean, overlays with polar data.\nLongitude/latitude (measo_regions06_ll.*): assigning regions to longitude/latitude data, web maps. Boundaries are straight in longitude/latitude (see Definition).\nEPSG:3031 (measo_regions06_epsg_3031.*): polar stereographic maps, e.g. Quantarctica. Not equal area.\nGeoParquet for data tools (R, Python, DuckDB, the browser); FlatGeobuf for GIS and streaming; GeoJSON for simple web maps."
+  },
+  {
+    "objectID": "data.html#files",
+    "href": "data.html#files",
+    "title": "Data",
+    "section": "",
+    "text": "The regions are published at stable URLs under\nhttps://australianantarcticdivision.github.io/measoshapes/data/v06/\nThe same files are in the R package, in inst/extdata (find them with system.file(\"extdata\", package = \"measoshapes\")), and are created by data-raw/export.R.\n\n\n\n\nTable 1\n\n\n\n\n\n\nfile\ncrs\ngeometry\nrows\nsize\n\n\n\n\nmeaso_regions06_ll.fgb\nlongitude/latitude (OGC:CRS84)\nMULTIPOLYGON\n20\n13 kB\n\n\nmeaso_regions06_ll.geojson\nlongitude/latitude (OGC:CRS84)\nMULTIPOLYGON\n20\n11 kB\n\n\nmeaso_regions06_ll.parquet\nlongitude/latitude (OGC:CRS84)\nMULTIPOLYGON\n20\n9 kB\n\n\nmeaso_regions06.fgb\npolar equal area (LAEA, ≡ EPSG:6932)\nPOLYGON\n20\n305 kB\n\n\nmeaso_regions06.parquet\npolar equal area (LAEA, ≡ EPSG:6932)\nPOLYGON\n20\n312 kB\n\n\nmeaso_regions06_epsg_3031.fgb\npolar stereographic (EPSG:3031)\nPOLYGON\n20\n306 kB\n\n\nmeaso_regions06_epsg_3031.parquet\npolar stereographic (EPSG:3031)\nPOLYGON\n20\n312 kB\n\n\n\n\n\n\n\n\nand a QGIS style, measo_regions06.qml (see QGIS).\nWhich to use:\n\nPolar equal area (measo_regions06.*): areas, maps of the Southern Ocean, overlays with polar data.\nLongitude/latitude (measo_regions06_ll.*): assigning regions to longitude/latitude data, web maps. Boundaries are straight in longitude/latitude (see Definition).\nEPSG:3031 (measo_regions06_epsg_3031.*): polar stereographic maps, e.g. Quantarctica. Not equal area.\nGeoParquet for data tools (R, Python, DuckDB, the browser); FlatGeobuf for GIS and streaming; GeoJSON for simple web maps."
+  },
+  {
+    "objectID": "data.html#columns",
+    "href": "data.html#columns",
+    "title": "Data",
+    "section": "Columns",
+    "text": "Columns\n\n\n\n\nTable 2\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nname\nlabel\nsector\nzone\nfill\ncolour\n\n\n\n\nAOA\nAntarctic Atlantic\nAtlantic\nAntarctic\n#F9BDBC\n\n\n\nAOS\nSubantarctic Atlantic\nAtlantic\nSubantarctic\n#F27071\n\n\n\nAON\nNorthern Atlantic\nAtlantic\nNorthern\n#E11F26\n\n\n\nAOT\nTemperate Atlantic\nAtlantic\nNA\nNA\n\n\n\nCIA\nAntarctic Central Indian\nCentralIndian\nAntarctic\n#F9D7C2\n\n\n\nCIS\nSubantarctic Central Indian\nCentralIndian\nSubantarctic\n#F4B187\n\n\n\nCIN\nNorthern Central Indian\nCentralIndian\nNorthern\n#EC8444\n\n\n\nCIT\nTemperate Central Indian\nCentralIndian\nNA\nNA\n\n\n\nEIA\nAntarctic East Indian\nEastIndian\nAntarctic\n#D1D3EA\n\n\n\nEIS\nSubantarctic East Indian\nEastIndian\nSubantarctic\n#B0B4D9\n\n\n\nEIN\nNorthern East Indian\nEastIndian\nNorthern\n#878DC5\n\n\n\nEIT\nTemperate East Indian\nEastIndian\nNA\nNA\n\n\n\nWPA\nAntarctic West Pacific\nWestPacific\nAntarctic\n#E0B8D6\n\n\n\nWPS\nSubantarctic West Pacific\nWestPacific\nSubantarctic\n#C579B2\n\n\n\nWPN\nNorthern West Pacific\nWestPacific\nNorthern\n#843A75\n\n\n\nWPT\nTemperate West Pacific\nWestPacific\nNA\nNA\n\n\n\nEPA\nAntarctic East Pacific\nEastPacific\nAntarctic\n#9FC5C7\n\n\n\nEPS\nSubantarctic East Pacific\nEastPacific\nSubantarctic\n#609FA0\n\n\n\nEPN\nNorthern East Pacific\nEastPacific\nNorthern\n#4B7E7F\n\n\n\nEPT\nTemperate East Pacific\nEastPacific\nNA\nNA\n\n\n\n\n\n\n\n\n\n\nname: region code, sector code then zone code (T for the temperate regions).\nlabel: full name, zone then sector, e.g. “Antarctic Atlantic”.\nsector: one of Atlantic, CentralIndian, EastIndian, WestPacific, EastPacific.\nzone: Antarctic, Subantarctic, Northern; empty for the T regions (outside MEASO).\nfill: the region’s colour in the MEASO Summary for Policymakers (Figure 5), as #RRGGBB; empty for the T regions."
+  },
+  {
+    "objectID": "data.html#versions",
+    "href": "data.html#versions",
+    "title": "Data",
+    "section": "Versions",
+    "text": "Versions\nThe v06 in the URL is the version of the regions. Version 06 has the boundaries of version 05, with one row per region, labels, and the published colours; see Definition and News. Version 05 is available in the R package as released (measo_regions05), and as the geopackages in inst/extdata."
+  },
+  {
+    "objectID": "data.html#citing",
+    "href": "data.html#citing",
+    "title": "Data",
+    "section": "Citing",
+    "text": "Citing\nPlease cite the measoshapes package:\n\nSumner, M. D. measoshapes: Southern Ocean Shapes for ‘MEASO’ work. R package version 0.0.06. https://github.com/AustralianAntarcticDivision/measoshapes\n\nand, for the definition of the MEASO assessment areas:\n\nConstable, A.J., J. Melbourne-Thomas, M.M.C. Muelbert, S. McCormack, M. Brasier, J.A. Caccavo, R.D. Cavanagh, S.M. Grant, H.J. Griffiths, J. Gutt, S.F. Henley, J. Höfer, A.B. Hollowed, N.M. Johnston, S.A. Morley, E.J. Murphy, M.H. Pinkerton, I.R. Schloss, K.M. Swadling, A.P. Van de Putte (2023) Marine Ecosystem Assessment for the Southern Ocean: Summary for Policymakers. Integrated Climate and Ecosystem Dynamics in the Southern Ocean, Scientific Committee on Antarctic Research, Scientific Committee on Oceanic Research, Integrated Marine Biosphere Research. https://doi.org/10.5281/zenodo.8359585\nMcCormack, S.A., J. Melbourne-Thomas, R. Trebilco, J.L. Blanchard, B. Raymond, A. Constable (2021) Decades of dietary data demonstrate regional food web structures in the Southern Ocean. Ecology and Evolution 11(1): 227–241. https://doi.org/10.1002/ece3.7017"
+  },
+  {
+    "objectID": "duckdb.html",
+    "href": "duckdb.html",
+    "title": "DuckDB",
+    "section": "",
+    "text": "DuckDB reads GeoParquet over HTTP, and with the spatial extension the geometry column is a GEOMETRY. The same SQL works in the DuckDB CLI, and from R, Python, or the browser. Code on this page is not run when the site is built."
+  },
+  {
+    "objectID": "duckdb.html#setup",
+    "href": "duckdb.html#setup",
+    "title": "DuckDB",
+    "section": "Setup",
+    "text": "Setup\nINSTALL spatial;\nLOAD spatial;\nSET VARIABLE base = 'https://australianantarcticdivision.github.io/measoshapes/data/v06';"
+  },
+  {
+    "objectID": "duckdb.html#read",
+    "href": "duckdb.html#read",
+    "title": "DuckDB",
+    "section": "Read",
+    "text": "Read\nSELECT name, label, fill\nFROM read_parquet(getvariable('base') || '/measo_regions06_ll.parquet');"
+  },
+  {
+    "objectID": "duckdb.html#assign-regions-to-points",
+    "href": "duckdb.html#assign-regions-to-points",
+    "title": "DuckDB",
+    "section": "Assign regions to points",
+    "text": "Assign regions to points\nDuckDB spatial works in the plane, which matches the regions’ definition (boundaries straight in longitude/latitude), so longitude/latitude points are tested against measo_regions06_ll directly:\nWITH pts AS (\n  SELECT * FROM (VALUES (147.3, -50.2), (100.5, -60.5), (-10.5, -70.5), (-82.5, -45.5), (171.5, -65.5), (-175.5, -65.5))\n    AS t(lon, lat)\n)\nSELECT pts.lon, pts.lat, r.name, r.sector, r.zone\nFROM pts\nLEFT JOIN read_parquet(getvariable('base') || '/measo_regions06_ll.parquet') AS r\n  ON ST_Within(ST_Point(pts.lon, pts.lat), r.geometry)\nORDER BY ALL;\nFor a table of your own, replace pts with e.g. read_csv('obs.csv').\nMany boundaries run along whole or half degrees of longitude and latitude, so data on a regular grid can fall exactly on a boundary. Such a point is within neither region; use ST_Intersects instead of ST_Within to get both regions (and then choose one)."
+  },
+  {
+    "objectID": "duckdb.html#areas",
+    "href": "duckdb.html#areas",
+    "title": "DuckDB",
+    "section": "Areas",
+    "text": "Areas\nUse the polar equal area version:\nSELECT name, round(ST_Area(geometry) / 1e6) AS area_km2\nFROM read_parquet(getvariable('base') || '/measo_regions06.parquet')\nORDER BY area_km2 DESC;"
+  },
+  {
+    "objectID": "duckdb.html#from-r-and-python",
+    "href": "duckdb.html#from-r-and-python",
+    "title": "DuckDB",
+    "section": "From R and Python",
+    "text": "From R and Python\nlibrary(duckdb)\ncon &lt;- dbConnect(duckdb())\ndbExecute(con, \"INSTALL spatial; LOAD spatial;\")\ndbGetQuery(con, \"SELECT name, sector, zone FROM read_parquet('https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06_ll.parquet')\")\nimport duckdb\nduckdb.sql(\"INSTALL spatial; LOAD spatial;\")\nduckdb.sql(\"SELECT name, sector, zone FROM read_parquet('https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06_ll.parquet')\")\nIn the browser, DuckDB-Wasm runs the same queries: see Web."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "MEASO regions",
+    "section": "",
+    "text": "The MEASO regions divide the Southern Ocean into five sectors and three zones, giving 15 regions for assessment, summary and comparison. A fourth, northern band in each sector (the “T” regions) covers the remaining ocean to 30°S so that any location in the domain falls in exactly one region.\nFigure 1: MEASO regions (version 06) in the colours of the MEASO Summary for Policymakers, with the Antarctic continent (grey) cut out. T regions (outside MEASO) are outlined only."
+  },
+  {
+    "objectID": "index.html#get-the-data",
+    "href": "index.html#get-the-data",
+    "title": "MEASO regions",
+    "section": "Get the data",
+    "text": "Get the data\n\n\n\nFormat\nPolar (equal area)\nLongitude/latitude\nEPSG:3031\n\n\n\n\nGeoParquet\nmeaso_regions06.parquet\nmeaso_regions06_ll.parquet\nmeaso_regions06_epsg_3031.parquet\n\n\nFlatGeobuf\nmeaso_regions06.fgb\nmeaso_regions06_ll.fgb\nmeaso_regions06_epsg_3031.fgb\n\n\nGeoJSON\n\nmeaso_regions06_ll.geojson\n\n\n\nQGIS style\nmeaso_regions06.qml\n\n\n\n\n\nEach file has one row per region with columns name, label (e.g. “Antarctic Atlantic”), sector, zone and fill (the region’s colour). See Data for details and stable URLs, and the Use menu for reading the regions in R, Python, DuckDB, the browser and QGIS.\nIn R, the measoshapes package provides the regions as data sets:\nremotes::install_github(\"AustralianAntarcticDivision/measoshapes\")\nlibrary(measoshapes)\nmeaso_regions06"
+  },
+  {
+    "objectID": "index.html#how-the-regions-are-defined",
+    "href": "index.html#how-the-regions-are-defined",
+    "title": "MEASO regions",
+    "section": "How the regions are defined",
+    "text": "How the regions are defined\nThe regions are built from lines: sector boundaries, three simplified ocean fronts, and the domain edges (85°S to 30°S, all longitudes). Their boundaries are straight lines in longitude/latitude. See Definition."
+  },
+  {
+    "objectID": "python.html",
+    "href": "python.html",
+    "title": "Python",
+    "section": "",
+    "text": "The examples use geopandas. Code on this page is not run when the site is built."
+  },
+  {
+    "objectID": "python.html#reading",
+    "href": "python.html#reading",
+    "title": "Python",
+    "section": "Reading",
+    "text": "Reading\nGeoParquet, from a URL (needs fsspec and aiohttp) or a local file:\nimport geopandas as gpd\n\nbase = \"https://australianantarcticdivision.github.io/measoshapes/data/v06\"\nregions = gpd.read_parquet(f\"{base}/measo_regions06.parquet\")\nregions_ll = gpd.read_parquet(f\"{base}/measo_regions06_ll.parquet\")\nregions.crs\nFlatGeobuf or GeoJSON are read with GDAL (via pyogrio), which reads URLs directly:\nregions = gpd.read_file(f\"{base}/measo_regions06.fgb\")"
+  },
+  {
+    "objectID": "python.html#assigning-regions-to-data",
+    "href": "python.html#assigning-regions-to-data",
+    "title": "Python",
+    "section": "Assigning regions to data",
+    "text": "Assigning regions to data\ngeopandas works in the plane, which matches the regions’ definition (boundaries straight in longitude/latitude), so longitude/latitude points can be joined directly to measo_regions06_ll:\nimport pandas as pd\n\npts = pd.DataFrame({\"lon\": [147.3, 100.5, -10.5, -82.5, 171.5, -175.5],\n                    \"lat\": [-50.2, -60.5, -70.5, -45.5, -65.5, -65.5]})\npts = gpd.GeoDataFrame(pts, geometry=gpd.points_from_xy(pts.lon, pts.lat), crs=\"OGC:CRS84\")\ngpd.sjoin(pts, regions_ll, how=\"left\", predicate=\"within\")[[\"lon\", \"lat\", \"name\", \"label\"]]\n     lon   lat name         sector       zone\n0  147.3 -50.2  EIN     EastIndian   Northern\n1  100.5 -60.5  CIA  CentralIndian  Antarctic\n2  -10.5 -70.5  AOA       Atlantic  Antarctic\n3  -82.5 -45.5  EPN    EastPacific   Northern\n4  171.5 -65.5  WPA    WestPacific  Antarctic\n5 -175.5 -65.5  WPA    WestPacific  Antarctic\nA point exactly on a boundary (common for gridded data, as many boundaries run along whole or half degrees) is within neither region; use predicate=\"intersects\" to get both."
+  },
+  {
+    "objectID": "python.html#areas",
+    "href": "python.html#areas",
+    "title": "Python",
+    "section": "Areas",
+    "text": "Areas\nUse the polar equal area version:\nregions.assign(area_km2=regions.area / 1e6)[[\"name\", \"area_km2\"]]"
+  },
+  {
+    "objectID": "python.html#maps",
+    "href": "python.html#maps",
+    "title": "Python",
+    "section": "Maps",
+    "text": "Maps\nThe fill column has the colours:\nax = regions.plot(color=regions[\"fill\"].fillna(\"#FFFFFF\"),\n                  edgecolor=\"grey\", linewidth=0.5)\nax.set_axis_off()"
+  },
+  {
+    "objectID": "r.html",
+    "href": "r.html",
+    "title": "R",
+    "section": "",
+    "text": "remotes::install_github(\"AustralianAntarcticDivision/measoshapes\")\nlibrary(measoshapes)\nThe package has the regions as sf data sets, one row per region (20 rows), with columns name, label, sector, zone and fill:\n\nmeaso_regions06, measo_regions06_coastline: polar equal area\nmeaso_regions06_ll, measo_regions06_ll_coastline: longitude/latitude\nmeaso_names06: the columns alone\n\n\nmeaso_regions06\n\nSimple feature collection with 20 features and 5 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: -6381686 ymin: -6381694 xmax: 6381694 ymax: 6381694\nProjected CRS: +proj=laea +lat_0=-90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\n   name                       label        sector         zone    fill\n1   AOA          Antarctic Atlantic      Atlantic    Antarctic #F9BDBC\n2   AOS       Subantarctic Atlantic      Atlantic Subantarctic #F27071\n3   AON           Northern Atlantic      Atlantic     Northern #E11F26\n4   AOT          Temperate Atlantic      Atlantic         &lt;NA&gt;    &lt;NA&gt;\n5   CIA    Antarctic Central Indian CentralIndian    Antarctic #F9D7C2\n6   CIS Subantarctic Central Indian CentralIndian Subantarctic #F4B187\n7   CIN     Northern Central Indian CentralIndian     Northern #EC8444\n8   CIT    Temperate Central Indian CentralIndian         &lt;NA&gt;    &lt;NA&gt;\n9   EIA       Antarctic East Indian    EastIndian    Antarctic #D1D3EA\n10  EIS    Subantarctic East Indian    EastIndian Subantarctic #B0B4D9\n11  EIN        Northern East Indian    EastIndian     Northern #878DC5\n12  EIT       Temperate East Indian    EastIndian         &lt;NA&gt;    &lt;NA&gt;\n13  WPA      Antarctic West Pacific   WestPacific    Antarctic #E0B8D6\n14  WPS   Subantarctic West Pacific   WestPacific Subantarctic #C579B2\n15  WPN       Northern West Pacific   WestPacific     Northern #843A75\n16  WPT      Temperate West Pacific   WestPacific         &lt;NA&gt;    &lt;NA&gt;\n17  EPA      Antarctic East Pacific   EastPacific    Antarctic #9FC5C7\n18  EPS   Subantarctic East Pacific   EastPacific Subantarctic #609FA0\n19  EPN       Northern East Pacific   EastPacific     Northern #4B7E7F\n20  EPT      Temperate East Pacific   EastPacific         &lt;NA&gt;    &lt;NA&gt;\n                         geometry\n1  POLYGON ((-2891647 1737477,...\n2  POLYGON ((1842392 3191116, ...\n3  POLYGON ((2613013 4525871, ...\n4  POLYGON ((-3353009 1723416,...\n5  POLYGON ((279139.2 483483.3...\n6  POLYGON ((1842392 3191116, ...\n7  POLYGON ((2294977 3975017, ...\n8  POLYGON ((2613013 4525871, ...\n9  POLYGON ((3048452 -1421517,...\n10 POLYGON ((533521.3 -3025749...\n11 POLYGON ((4093993 -1909060,...\n12 POLYGON ((4882884 -2276926,...\n13 POLYGON ((524717.5 -3027289...\n14 POLYGON ((9312.405 -2801188...\n15 POLYGON ((637964.6 -3618077...\n16 POLYGON ((16836.49 -4961088...\n17 POLYGON ((-457314.9 -320215...\n18 POLYGON ((-2250033 -1575490...\n19 POLYGON ((-2992183 -2095149...\n20 POLYGON ((-4421564 -3096013...\n\n\nVersion 05 is in the package as released (measo_regions05 etc., 24 rows with the West Pacific regions in two pieces, and measo_names row-aligned with them); see the README.\nThe files on the Data page (one row per region) are in the package too:\nf &lt;- system.file(\"extdata/measo_regions06.parquet\", package = \"measoshapes\")"
+  },
+  {
+    "objectID": "r.html#the-measoshapes-package",
+    "href": "r.html#the-measoshapes-package",
+    "title": "R",
+    "section": "",
+    "text": "remotes::install_github(\"AustralianAntarcticDivision/measoshapes\")\nlibrary(measoshapes)\nThe package has the regions as sf data sets, one row per region (20 rows), with columns name, label, sector, zone and fill:\n\nmeaso_regions06, measo_regions06_coastline: polar equal area\nmeaso_regions06_ll, measo_regions06_ll_coastline: longitude/latitude\nmeaso_names06: the columns alone\n\n\nmeaso_regions06\n\nSimple feature collection with 20 features and 5 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: -6381686 ymin: -6381694 xmax: 6381694 ymax: 6381694\nProjected CRS: +proj=laea +lat_0=-90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\n   name                       label        sector         zone    fill\n1   AOA          Antarctic Atlantic      Atlantic    Antarctic #F9BDBC\n2   AOS       Subantarctic Atlantic      Atlantic Subantarctic #F27071\n3   AON           Northern Atlantic      Atlantic     Northern #E11F26\n4   AOT          Temperate Atlantic      Atlantic         &lt;NA&gt;    &lt;NA&gt;\n5   CIA    Antarctic Central Indian CentralIndian    Antarctic #F9D7C2\n6   CIS Subantarctic Central Indian CentralIndian Subantarctic #F4B187\n7   CIN     Northern Central Indian CentralIndian     Northern #EC8444\n8   CIT    Temperate Central Indian CentralIndian         &lt;NA&gt;    &lt;NA&gt;\n9   EIA       Antarctic East Indian    EastIndian    Antarctic #D1D3EA\n10  EIS    Subantarctic East Indian    EastIndian Subantarctic #B0B4D9\n11  EIN        Northern East Indian    EastIndian     Northern #878DC5\n12  EIT       Temperate East Indian    EastIndian         &lt;NA&gt;    &lt;NA&gt;\n13  WPA      Antarctic West Pacific   WestPacific    Antarctic #E0B8D6\n14  WPS   Subantarctic West Pacific   WestPacific Subantarctic #C579B2\n15  WPN       Northern West Pacific   WestPacific     Northern #843A75\n16  WPT      Temperate West Pacific   WestPacific         &lt;NA&gt;    &lt;NA&gt;\n17  EPA      Antarctic East Pacific   EastPacific    Antarctic #9FC5C7\n18  EPS   Subantarctic East Pacific   EastPacific Subantarctic #609FA0\n19  EPN       Northern East Pacific   EastPacific     Northern #4B7E7F\n20  EPT      Temperate East Pacific   EastPacific         &lt;NA&gt;    &lt;NA&gt;\n                         geometry\n1  POLYGON ((-2891647 1737477,...\n2  POLYGON ((1842392 3191116, ...\n3  POLYGON ((2613013 4525871, ...\n4  POLYGON ((-3353009 1723416,...\n5  POLYGON ((279139.2 483483.3...\n6  POLYGON ((1842392 3191116, ...\n7  POLYGON ((2294977 3975017, ...\n8  POLYGON ((2613013 4525871, ...\n9  POLYGON ((3048452 -1421517,...\n10 POLYGON ((533521.3 -3025749...\n11 POLYGON ((4093993 -1909060,...\n12 POLYGON ((4882884 -2276926,...\n13 POLYGON ((524717.5 -3027289...\n14 POLYGON ((9312.405 -2801188...\n15 POLYGON ((637964.6 -3618077...\n16 POLYGON ((16836.49 -4961088...\n17 POLYGON ((-457314.9 -320215...\n18 POLYGON ((-2250033 -1575490...\n19 POLYGON ((-2992183 -2095149...\n20 POLYGON ((-4421564 -3096013...\n\n\nVersion 05 is in the package as released (measo_regions05 etc., 24 rows with the West Pacific regions in two pieces, and measo_names row-aligned with them); see the README.\nThe files on the Data page (one row per region) are in the package too:\nf &lt;- system.file(\"extdata/measo_regions06.parquet\", package = \"measoshapes\")"
+  },
+  {
+    "objectID": "r.html#reading-from-a-url",
+    "href": "r.html#reading-from-a-url",
+    "title": "R",
+    "section": "Reading from a URL",
+    "text": "Reading from a URL\nNo package installation is needed to read the published files. GDAL reads them directly from the URL.\nu &lt;- \"https://australianantarcticdivision.github.io/measoshapes/data/v06/measo_regions06.parquet\"\n\n## sf\nx &lt;- sf::read_sf(u)\n\n## terra\nv &lt;- terra::vect(u)\n\n## gdalraster\nlyr &lt;- gdalraster::GDALVector$new(paste0(\"/vsicurl/\", u))\nd &lt;- lyr$fetch(-1)\nlyr$close()\n\n## arrow, geometry as well-known binary (wk/geoarrow)\nlibrary(geoarrow)\ntab &lt;- arrow::read_parquet(u)\nFlatGeobuf and GeoJSON work the same way (change the file name), and are a good choice if your GDAL doesn’t have the Parquet driver (check \"Parquet\" %in% sf::st_drivers()$name)."
+  },
+  {
+    "objectID": "r.html#assigning-regions-to-data",
+    "href": "r.html#assigning-regions-to-data",
+    "title": "R",
+    "section": "Assigning regions to data",
+    "text": "Assigning regions to data\nTo find the region for longitude/latitude locations, transform them to the polar equal area projection and join with the polar regions:\n\nregions &lt;- read_sf(file.path(dd, \"measo_regions06.parquet\"))  ## or the URL above\npts &lt;- data.frame(lon = c(147.3, 100.5, -10.5, -82.5, 171.5, -175.5),\n                  lat = c(-50.2, -60.5, -70.5, -45.5, -65.5, -65.5))\np &lt;- st_as_sf(pts, coords = c(\"lon\", \"lat\"), crs = \"OGC:CRS84\", remove = FALSE)\np &lt;- st_join(st_transform(p, st_crs(regions)), regions)\nst_drop_geometry(p)\n\n     lon   lat name                    label        sector      zone    fill\n1  147.3 -50.2  EIN     Northern East Indian    EastIndian  Northern #878DC5\n2  100.5 -60.5  CIA Antarctic Central Indian CentralIndian Antarctic #F9D7C2\n3  -10.5 -70.5  AOA       Antarctic Atlantic      Atlantic Antarctic #F9BDBC\n4  -82.5 -45.5  EPN    Northern East Pacific   EastPacific  Northern #4B7E7F\n5  171.5 -65.5  WPA   Antarctic West Pacific   WestPacific Antarctic #E0B8D6\n6 -175.5 -65.5  WPA   Antarctic West Pacific   WestPacific Antarctic #E0B8D6\n\n\nThe polar regions are densified to 0.2° from the longitude/latitude definition, so this agrees with the definition except for locations within a very short distance of a boundary.\nFor gridded data, the same applies: classify cell centres, or rasterize the polar regions onto your grid (e.g. terra::rasterize(terra::vect(regions), grid, field = \"name\"))."
+  },
+  {
+    "objectID": "r.html#maps",
+    "href": "r.html#maps",
+    "title": "R",
+    "section": "Maps",
+    "text": "Maps\n\npar(mar = rep(0, 4))\nplot(st_geometry(regions), col = regions$fill, border = \"grey60\")\n\n\n\n\n\n\n\nFigure 1: Base graphics with the fill colours.\n\n\n\n\n\nWith ggplot2, use the colours as they are with scale_fill_identity():\nlibrary(ggplot2)\nggplot(regions, aes(fill = fill)) + geom_sf(colour = \"grey60\") + scale_fill_identity()"
+  }
+]
