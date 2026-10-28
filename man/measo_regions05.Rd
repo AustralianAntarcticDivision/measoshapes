@@ -15,6 +15,11 @@ are '_coastline' suffix.
 }
 \details{
 Longer names and decomposition of each region is in 'measo_names'.
+
+Version 05 is kept as released; see \link{measo_regions06} for the current version. Note that
+'measo_names' is row-aligned with the 24 polygons and is not a key: WestPacific is split at
+the anti-meridian, so its names appear twice, and the two WPA rows have different fills (row 1
+is a known error).
 }
 \references{
 Constable, A.J., J. Melbourne-Thomas, M.M.C. Muelbert, S. McCormack, M. Brasier, J.A. Caccavo,
