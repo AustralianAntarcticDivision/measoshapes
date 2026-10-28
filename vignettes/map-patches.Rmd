@@ -51,10 +51,11 @@ p4 <- g0 +
 p5 <- g0 +
   geom_bar(aes(cyl))
 
-## create the background map, just simply our
-## region outlines
-g <- ggplot(measo_regions05) +
-  geom_sf(fill = "transparent") +
+## create the background map, the regions in their colours
+## (half-transparent, so the plots stand out; the temperate regions have no fill)
+g <- ggplot(measo_regions06) +
+  geom_sf(aes(fill = fill), alpha = 0.5) +
+  scale_fill_identity(na.value = "transparent") +
   theme_bw()
 
 ## now use patchwork to compose
