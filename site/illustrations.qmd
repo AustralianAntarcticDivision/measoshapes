@@ -133,5 +133,5 @@ knitr::kable(tab, row.names = FALSE)
 ## Plots on a map
 
 The regions make a natural layout for small plots of data summarised by region. The
-[map-patches](https://github.com/AustralianAntarcticDivision/measoshapes/blob/main/vignettes/map-patches.Rmd)
-vignette in the R package shows one way to do this with ggplot2 and patchwork.
+[map-patches](package/articles/map-patches.html) vignette in the R package shows one way to do this
+with ggplot2 and patchwork.

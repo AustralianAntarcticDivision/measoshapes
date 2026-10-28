@@ -38,7 +38,7 @@ measo <- measo_regions06_coastline
 plot(st_geometry(measo), col = measo$fill, border = "grey40")
 ```
 
-<img src="man/figures/README-plot-1.png" alt="" width="100%" />
+<img src="man/figures/README-plot-1.png" alt="Polar map of the 20 MEASO regions (version 06) in their fill colours, with the Antarctic continent cut out." width="100%" />
 
 The temperate (T) regions in the north of each sector are outside MEASO
 and have no fill.
@@ -80,7 +80,7 @@ library(ggplot2)
 ggplot(measo, aes(fill = fill)) + geom_sf(colour = "grey40") + scale_fill_identity()
 ```
 
-<img src="man/figures/README-ggplot2-1.png" alt="" width="100%" />
+<img src="man/figures/README-ggplot2-1.png" alt="The same map of the MEASO regions made with ggplot2." width="100%" />
 
 ## Map with SOmap
 
@@ -191,7 +191,7 @@ text(cds, lab = measo_names$name, cex = 0.7)
 maps::map(add = TRUE)
 ```
 
-<img src="man/figures/README-dummy-1.png" alt="" width="100%" />
+<img src="man/figures/README-dummy-1.png" alt="Longitude/latitude map of the 24 version 05 polygons, coloured by sector and labelled with their names, with world coastlines." width="100%" />
 
 ## References
 

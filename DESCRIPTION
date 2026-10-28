@@ -17,7 +17,9 @@ Depends:
     sf
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/AustralianAntarcticDivision/measoshapes
+URL: https://australianantarcticdivision.github.io/measoshapes/package/,
+    https://australianantarcticdivision.github.io/measoshapes/,
+    https://github.com/AustralianAntarcticDivision/measoshapes
 BugReports: https://github.com/AustralianAntarcticDivision/measoshapes/issues
 Roxygen: list(markdown = TRUE)
 Suggests: 

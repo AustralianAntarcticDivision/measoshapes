@@ -44,7 +44,7 @@ To map the regions with base plotting (with the [sf package](https://r-spatial.g
 is one row per region, with its `name`, `label`, `sector`, `zone`, and `fill` colour. The `_coastline`
 form has the Antarctic continent cut out.
 
-```{r plot}
+```{r plot, fig.alt = "Polar map of the 20 MEASO regions (version 06) in their fill colours, with the Antarctic continent cut out."}
 library(measoshapes)
 library(sf)
 
@@ -63,7 +63,7 @@ sf::st_drop_geometry(measo)
 To use the literal fill colours we need `scale_fill_identity()`, this is ggplot's "straight-through"
 mechanism.
 
-```{r ggplot2}
+```{r ggplot2, fig.alt = "The same map of the MEASO regions made with ggplot2."}
 library(ggplot2)
 ggplot(measo, aes(fill = fill)) + geom_sf(colour = "grey40") + scale_fill_identity()
 ```
@@ -146,7 +146,7 @@ measo05 <- measo_regions05 %>% group_by(name) %>% summarize() %>%
 The northern regions are assigned codes that include "T" for **temperate**, but they aren't part of
 MEASO. They share a sector but have no assigned zone.
 
-```{r dummy}
+```{r dummy, fig.alt = "Longitude/latitude map of the 24 version 05 polygons, coloured by sector and labelled with their names, with world coastlines."}
 ## label positions from the (equal area) polar form
 cds <- st_coordinates(st_transform(st_centroid(measo_regions05), 4326))
 par(mar = rep(0.2, 4))

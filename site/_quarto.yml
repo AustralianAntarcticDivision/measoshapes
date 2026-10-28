@@ -1,10 +1,18 @@
 project:
   type: website
   output-dir: _site
-  ## copy ../inst/extdata into data/v05 (published at stable URLs)
+  ## render only the site's own pages: package/ (pkgdown output, with .md copies of its pages)
+  ## is copied as it is
+  render:
+    - "*.qmd"
+    - "!package/"
+  ## copy the version 06 files from ../inst/extdata into data/v06 (published at stable URLs)
   pre-render: copy-data.ts
+  ## package/ is the pkgdown documentation of the R package, built by pkgdown::build_site()
+  ## (see ../_pkgdown.yml)
   resources:
     - data/
+    - package/
     - web-demo.js
 
 execute:
@@ -33,6 +41,8 @@ website:
           - web.qmd
           - qgis.qmd
       - news.qmd
+      - text: "R package"
+        href: package/index.html
     right:
       - icon: github
         href: https://github.com/AustralianAntarcticDivision/measoshapes
