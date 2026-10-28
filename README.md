@@ -216,6 +216,37 @@ maps::map(add = TRUE)
 par(xpd = TRUE)
 ```
 
+## References
+
+The MEASO assessment areas (sectors and zones) are described in the MEASO Summary for Policymakers
+(Figure 5, "MEASO assessment areas", adapted from McCormack et al. 2021). See also
+`citation("measoshapes")`.
+
+* Constable, A.J., J. Melbourne-Thomas, M.M.C. Muelbert, S. McCormack, M. Brasier, J.A. Caccavo,
+  R.D. Cavanagh, S.M. Grant, H.J. Griffiths, J. Gutt, S.F. Henley, J. Höfer, A.B. Hollowed,
+  N.M. Johnston, S.A. Morley, E.J. Murphy, M.H. Pinkerton, I.R. Schloss, K.M. Swadling,
+  A.P. Van de Putte (2023) Marine Ecosystem Assessment for the Southern Ocean: Summary for
+  Policymakers. Integrated Climate and Ecosystem Dynamics in the Southern Ocean, Scientific Committee
+  on Antarctic Research, Scientific Committee on Oceanic Research, Integrated Marine Biosphere Research.
+  <https://doi.org/10.5281/zenodo.8359585>
+* McCormack, S.A., J. Melbourne-Thomas, R. Trebilco, J.L. Blanchard, B. Raymond, A. Constable (2021)
+  Decades of dietary data demonstrate regional food web structures in the Southern Ocean. Ecology and
+  Evolution 11(1): 227–241. <https://doi.org/10.1002/ece3.7017>
+
+Earlier MEASO documents, from the time of versions 03 to 05 of the regions:
+
+* Brasier, M.J., A. Constable, J. Melbourne-Thomas, R. Trebilco, H. Griffiths, A. Van de Putte,
+  M. Sumner (2019) Observations and models to support the first Marine Ecosystem Assessment for the
+  Southern Ocean (MEASO). Journal of Marine Systems 197: 103182.
+  <https://doi.org/10.1016/j.jmarsys.2019.05.008>
+* Constable, A., J. Melbourne-Thomas, R. Trebilco, M. Brasier (2018) Marine Ecosystem Assessment for
+  the Southern Ocean (MEASO). SC-CCAMLR 2018 Background Paper, SC-CAMLR-XXXVII/BG/22.
+  <https://figshare.utas.edu.au/articles/report/SC-CCAMLR_2018_Background_Paper_Marine_Ecosystem_Assessment_for_the_Southern_Ocean_MEASO_/23193956>
+* Constable, A., J. Melbourne-Thomas, R. Trebilco, M. Sumner, M. Brasier (2018) The role of models in
+  facilitating the first Marine Ecosystem Assessment for the Southern Ocean (MEASO). Australian Coastal
+  and Oceans Modelling and Observations meeting, Canberra, October 2018.
+  <https://figshare.utas.edu.au/articles/conference_contribution/The_role_of_models_in_facilitating_the_first_Marine_Ecosystem_Assessment_for_the_Southern_Ocean_MEASO_/23154533>
+
 -----
 
 Please note that the ‘measoshapes’ project is released with a

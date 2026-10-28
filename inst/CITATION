@@ -1,0 +1,44 @@
+citHeader("To cite the measoshapes package, and the MEASO assessment areas it provides, please use:")
+
+bibentry(
+  bibtype = "Manual",
+  title = "measoshapes: Southern Ocean Shapes for 'MEASO' work",
+  author = c(person("Michael D.", "Sumner"), person("Andrew", "Constable")),
+  year = "2026",
+  note = paste("R package version", meta$Version),
+  url = "https://github.com/AustralianAntarcticDivision/measoshapes",
+  textVersion = paste0("Sumner, M.D. and A. Constable (2026) measoshapes: Southern Ocean Shapes for ",
+                       "'MEASO' work. R package version ", meta$Version, ". ",
+                       "https://github.com/AustralianAntarcticDivision/measoshapes")
+)
+
+bibentry(
+  bibtype = "TechReport",
+  title = "Marine Ecosystem Assessment for the Southern Ocean: Summary for Policymakers",
+  author = c(person("A.J.", "Constable"), person("J.", "Melbourne-Thomas"),
+             person("M.M.C.", "Muelbert"), person("S.", "McCormack"), person("M.", "Brasier"),
+             person("J.A.", "Caccavo"), person("R.D.", "Cavanagh"), person("S.M.", "Grant"),
+             person("H.J.", "Griffiths"), person("J.", "Gutt"), person("S.F.", "Henley"),
+             person("J.", "Höfer"), person("A.B.", "Hollowed"), person("N.M.", "Johnston"),
+             person("S.A.", "Morley"), person("E.J.", "Murphy"), person("M.H.", "Pinkerton"),
+             person("I.R.", "Schloss"), person("K.M.", "Swadling"), person("A.P.", "Van de Putte")),
+  year = "2023",
+  institution = paste("Integrated Climate and Ecosystem Dynamics in the Southern Ocean,",
+                      "Scientific Committee on Antarctic Research, Scientific Committee on Oceanic Research,",
+                      "Integrated Marine Biosphere Research"),
+  doi = "10.5281/zenodo.8359585",
+  note = "The MEASO assessment areas are shown in Figure 5"
+)
+
+bibentry(
+  bibtype = "Article",
+  title = "Decades of dietary data demonstrate regional food web structures in the Southern Ocean",
+  author = c(person("S.A.", "McCormack"), person("J.", "Melbourne-Thomas"), person("R.", "Trebilco"),
+             person("J.L.", "Blanchard"), person("B.", "Raymond"), person("A.", "Constable")),
+  journal = "Ecology and Evolution",
+  year = "2021",
+  volume = "11",
+  number = "1",
+  pages = "227--241",
+  doi = "10.1002/ece3.7017"
+)
